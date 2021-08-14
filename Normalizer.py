@@ -1,4 +1,3 @@
-import numbers
 import os
 import csv
 import json
@@ -7,7 +6,6 @@ import string
 import re
 import jellyfish
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from itertools import repeat
 from Enricher import Enricher
@@ -21,7 +19,6 @@ It uses the determine method in order to determine whether a given name exists o
 Important notice : the functioned mentioned above is NOT and Injective function !! it is very likely that a couple of 'before' names will lead to same 'after'
 
 """
-
 
 
 class Normalizer(Enricher):
@@ -983,9 +980,10 @@ class Normalizer(Enricher):
                 pass
                 # add logging here
 
-    def Enrich(self,file_path):
+    def Enrich(self, file_path):
         self.normalize(file_path)
 
-if __name__ == '__main__':
-    enricher = Normalizer('settings.json')
-    enricher.Enrich('1339-12-1.json')
+
+# if __name__ == '__main__':
+    # enricher = Normalizer('settings.json')
+    # enricher.Enrich('1339-12-1.json')
