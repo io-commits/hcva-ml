@@ -25,53 +25,34 @@ class Normalizer(Enricher):
 
     def __init__(self, csv_path: str = None):
         super().__init__()
-        # print(self.input_path)
         self.legal_dictionary = dict()
         self.counter = 0
-        initialization_mod_flag = self.check_if_csv_exists(csv_path)
-        self.initialize_normalizer(self._input_path, initialization_mod_flag)
+        self.initialize_normalizer(csv_path)
 
-    def check_if_csv_exists(self, input_path):
-
-        flag = 1
-        for elem in os.listdir(input_path):
-
-            if os.path.basename(elem) == 'legal_personal.csv':
-                flag = 0
-                break
-
-        return flag
-
-    def initialize_normalizer(self, input_path, flag):
-
-        if flag == 0:
-            with open(input_path, 'r', encoding='utf-8') as csv_file:
-                reader = csv.reader(csv_file, delimiter=',')
-                before = [row[0] for row in reader]
-                after = [row[1] for row in reader]
-                self._legal_dictionary = dict(zip(before, after))
-
-        elif flag == 1:
-            pass
-
-        elif flag == 2:
-            pass
-
+    def get_flag(self, csv_path: str):
         # implement non existing initialization logic here:
         # 0 - with existing files on local drive
         # 1 - with existing files on elk db
-        # 2 with no existing verdicts at all
-
-    @property
-    def _legal_dictionary(self):
-        return self._legal_dictionary
-
-    @_legal_dictionary.setter
-    def _legal_dictionary(self):
-        if self._legal_dictionary is None:
-            self._legal_dictionary = dict()
+        # 2 - with no existing verdicts at all
+        if self.file_exists(csv_path):
+            return 'csv'
         else:
-            raise PermissionError('You are not allowed to set the dictionary')
+            return
+
+    def initialize_normalizer(self, csv_path: str):
+        flag = self.get_flag(csv_path)
+        if flag == 'csv':
+            with open(csv_path, 'r', encoding='utf-8') as csv_file:
+                reader = csv.reader(csv_file, delimiter=',')
+                before = [row[0] for row in reader]
+                after = [row[1] for row in reader]
+                self.legal_dictionary = dict(zip(before, after))
+        elif flag == 'elk':
+            pass
+        elif flag == 'empty':
+            pass
+        else:
+            raise ValueError('invalid initializing parameter. must be of type: csv, elk or empty')
 
     def make_doc_details_values_list(self, input_directory: str, output_directory: str):
         """
@@ -798,7 +779,3 @@ class Normalizer(Enricher):
 
     def enrich(self, file_path):
         self.normalize(file_path)
-
-# if __name__ == '__main__':
-# enricher = Normalizer('settings.json')
-# enricher.enrich('1339-12-1.json')
