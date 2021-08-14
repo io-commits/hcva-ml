@@ -1,33 +1,19 @@
-import pandas as pd
-import numpy as np
-import json
-from queue import Queue
 import os
-
+from queue import Queue
 from utils import PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR
 
 """
-
 A class that is in charge of enriching existing data
 It acts as the base class of all current and future enrichment classes.
-
 The enricher demands a 'settings.json'
-
-
-
 """
+
 
 class Enricher:
 
     def __init__(self):
-
-        # with open(input_path, 'r') as json_file:
-        #     dictionary = json.load(json_file)
-
         self.input_path = PARSED_SUCCESS_DIR
         self.output_path = NORMALIZED_SUCCESS_DIR
-        # self.input_path = dictionary['verdicts_input_path']
-        # self.output_path = dictionary['verdicts_output_path']
         self._jobs_queue = Queue()
         self.previous = None
         self.next = None
@@ -41,7 +27,6 @@ class Enricher:
     @property
     def _jobs_queue(self):
         return self._jobs_queue
-
 
     @property
     def input_path(self):
@@ -58,7 +43,6 @@ class Enricher:
 
         self.input_path = setter_input_path
 
-
     @property
     def output_path(self):
         return self.output_path
@@ -74,11 +58,9 @@ class Enricher:
 
         self.output_path = setter_output_path
 
-
     @_jobs_queue.setter
     def _jobs_queue(self, value):
         raise PermissionError('You are not allowed to set the Queue')
-
 
     @property
     def previous(self):
@@ -87,7 +69,6 @@ class Enricher:
     @previous.setter
     def previous(self, value):
         self.previous = value
-
 
     @property
     def next(self):
@@ -99,8 +80,3 @@ class Enricher:
 
     def __len__(self):
         return self._jobs_queue.qsize()
-
-if __name__ == '__main__':
-    e = Enricher()
-    e._input_path = '3'
-    print(e.enrich(1, 2))
