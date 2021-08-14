@@ -9,6 +9,8 @@ import pandas as pd
 from pathlib import Path
 from itertools import repeat
 from hcva.parser.enricher.Enricher import Enricher
+from utils import file_exists
+
 
 """
 The normalizer in char of normalizing the attorney and judges names
@@ -34,7 +36,7 @@ class Normalizer(Enricher):
         # 0 - with existing files on local drive
         # 1 - with existing files on elk db
         # 2 - with no existing verdicts at all
-        if self.file_exists(csv_path):
+        if file_exists(csv_path):
             return 'csv'
         else:
             return

@@ -1,3 +1,4 @@
+import json
 import os
 from glob import glob
 
@@ -40,12 +41,18 @@ def get_cases(path_):
 
 
 def file_exists(file_name):
-    if os.path.exists(file_name):
+    if os.path.isfile(file_name):
         return True
     return False
 
-    # for elem in os.listdir(file_name):
-    #     if os.path.basename(elem) == 'legal_personal.csv':
-    #         return True
-    #
-    # return False
+
+def save_data(data, file_name=None, file_path=None):
+    with open(file_path + file_name, 'w') as outfile:
+        json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+
+def save_case(enriched, case):
+    if enriched:
+        save_data(enriched, case, NORMALIZED_SUCCESS_DIR)
+    else:
+        save_data(enriched, case, NORMALIZED_FAILED_DIR)

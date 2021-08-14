@@ -1,12 +1,13 @@
 from hcva.parser.enricher.Normalizer import Normalizer
-from utils import create_dir, get_cases, PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR, NORMALIZED_FAILED_DIR, CSV_PATH
+import utils
 
 
 def normalize():
     print('enricher::normalize')
-    create_dir(NORMALIZED_SUCCESS_DIR)
-    create_dir(NORMALIZED_FAILED_DIR)
-    enricher = Normalizer(CSV_PATH)
-    cases = get_cases(PARSED_SUCCESS_DIR)
+    utils.create_dir(utils.NORMALIZED_SUCCESS_DIR)
+    utils.create_dir(utils.NORMALIZED_FAILED_DIR)
+    enricher = Normalizer(utils.CSV_PATH)
+    cases = utils.get_cases(utils.PARSED_SUCCESS_DIR)
     for case in cases:
-        enricher.enrich(case)
+        e = enricher.enrich(case)
+        utils.save_case(e, case)
