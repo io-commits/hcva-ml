@@ -4,6 +4,8 @@ import json
 from queue import Queue
 import os
 
+from utils import PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR
+
 """
 
 A class that is in charge of enriching existing data
@@ -17,18 +19,20 @@ The enricher demands a 'settings.json'
 
 class Enricher:
 
-    def __init__(self, settings_file_path='settings.json'):
+    def __init__(self):
 
-        with open(settings_file_path, 'r') as json_file:
-            dictionary = json.load(json_file)
+        # with open(input_path, 'r') as json_file:
+        #     dictionary = json.load(json_file)
 
-        self.input_path = dictionary['verdicts_input_path']
-        self.output_path = dictionary['verdicts_output_path']
+        self.input_path = PARSED_SUCCESS_DIR
+        self.output_path = NORMALIZED_SUCCESS_DIR
+        # self.input_path = dictionary['verdicts_input_path']
+        # self.output_path = dictionary['verdicts_output_path']
         self._jobs_queue = Queue()
         self.previous = None
         self.next = None
 
-    def Enrich(self, input_path, output_path):
+    def enrich(self, file_path):
         raise NotImplementedError('This method must be overridden !')
 
     def add_job_to_queue(self,job):
@@ -99,4 +103,4 @@ class Enricher:
 if __name__ == '__main__':
     e = Enricher()
     e._input_path = '3'
-    print(e.Enrich(1,2))
+    print(e.enrich(1, 2))
