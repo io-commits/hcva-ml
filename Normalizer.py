@@ -5,11 +5,11 @@ import queue
 import string
 import re
 import jellyfish
+import utils
 import pandas as pd
 from pathlib import Path
 from itertools import repeat
 from hcva.parser.enricher.Enricher import Enricher
-from utils import file_exists
 
 
 """
@@ -36,10 +36,10 @@ class Normalizer(Enricher):
         # 0 - with existing files on local drive
         # 1 - with existing files on elk db
         # 2 - with no existing verdicts at all
-        if file_exists(csv_path):
+        if utils.file_exists(csv_path):
             return 'csv'
         else:
-            return
+            return 'empty'
 
     def initialize_normalizer(self, csv_path: str):
         flag = self.get_flag(csv_path)
@@ -694,11 +694,8 @@ class Normalizer(Enricher):
         names_after_first_split = self.split_by_char(names_after_eliminating_unwanted_chars, ';')
         names_after_second_split = self.split_by_char(names_after_first_split, ',')
 
-        naming_path = 'naming_stopwords.csv'
-        stopwords_path = 'stopwordsafterfilter.csv'
-
-        names_after_naming = self.eliminate_naming_multi(names_after_second_split, naming_path)
-        names_after_stopwords = self.eliminate_naming_multi(names_after_naming, stopwords_path)
+        names_after_naming = self.eliminate_naming_multi(names_after_second_split, utils.NAMING_SW_CSV)
+        names_after_stopwords = self.eliminate_naming_multi(names_after_naming, utils.SW_AFTER_FILTER_CSV)
 
         names_ready_for_for_first_and_last_name = self.organize_name(names_after_stopwords)
         after_single_clean_list = self.clean_single_name_multi(names_ready_for_for_first_and_last_name)

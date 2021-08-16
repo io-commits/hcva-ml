@@ -9,7 +9,9 @@ OUTPUT_DIR = ROOT_DIR + '/cases/'
 PARSED_SUCCESS_DIR = OUTPUT_DIR + 'parsed/success/'
 NORMALIZED_SUCCESS_DIR = OUTPUT_DIR + 'normalized/success/'
 NORMALIZED_FAILED_DIR = OUTPUT_DIR + 'normalized/failed/'
-CSV_PATH = ROOT_DIR + '/legal_personal.csv'
+NAMING_SW_CSV = ROOT_DIR + '/resources/naming_stopwords.csv'
+SW_AFTER_FILTER_CSV = ROOT_DIR + '/resources/stopwordsafterfilter.csv'
+LEGAL_PERSONAL_CSV = ROOT_DIR + '/resources/legal_personal.csv'
 
 
 # do - return current path if didn't got oldPath and remove N folders from the end

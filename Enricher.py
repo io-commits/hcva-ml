@@ -21,7 +21,7 @@ class Enricher:
     def enrich(self, file_path):
         raise NotImplementedError('This method must be overridden !')
 
-    def add_job_to_queue(self,job):
+    def add_job_to_queue(self, job):
         self._jobs_queue.put(job)
 
     @property
