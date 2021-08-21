@@ -1,5 +1,5 @@
+import hcva.parser.enricher.utils as utils
 from hcva.parser.enricher.Normalizer import Normalizer
-import utils
 
 
 def normalizer():
@@ -9,5 +9,10 @@ def normalizer():
     enricher = Normalizer(utils.LEGAL_PERSONAL_CSV)
     cases = utils.get_cases(utils.PARSED_SUCCESS_DIR)
     for case in cases:
-        e = enricher.enrich(case)
-        utils.save_case(e, case)
+        e = None
+        try:
+            e = enricher.enrich(case)
+            utils.save_data(e, case, utils.NORMALIZED_SUCCESS_DIR)
+        except Exception as err:
+            print(err)
+            utils.save_data(e, case, utils.NORMALIZED_FAILED_DIR)

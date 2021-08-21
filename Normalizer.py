@@ -5,7 +5,7 @@ import queue
 import string
 import re
 import jellyfish
-import utils
+import hcva.parser.enricher.utils as utils
 import pandas as pd
 from pathlib import Path
 from itertools import repeat
@@ -36,7 +36,7 @@ class Normalizer(Enricher):
         # 0 - with existing files on local drive
         # 1 - with existing files on elk db
         # 2 - with no existing verdicts at all
-        if utils.file_exists(csv_path):
+        if csv_path and utils.file_exists(csv_path):
             return 'csv'
         else:
             return 'empty'
@@ -735,35 +735,31 @@ class Normalizer(Enricher):
         case_path - the verdict path string
         output_path - the string of the desired location to write the new json with the normalized names
         """
-        try:
-            input_joined_path = self.input_path + case_path
-            with open(input_joined_path, 'r', encoding='utf-8') as json_file:
-                verdict_json = json.load(json_file)
+        input_joined_path = self.input_path + case_path
+        with open(input_joined_path, 'r', encoding='utf-8') as json_file:
+            verdict_json = json.load(json_file)
 
-                petitioners = verdict_json["Doc Details"]["העותר"]
-                defense = verdict_json["Doc Details"]["המשיב"]
-                judges = verdict_json["Doc Details"]["לפני"]
-                petitioner_attorneys = verdict_json["Doc Details"]["בשם העותר"]
-                defense_attorneys = verdict_json["Doc Details"]["בשם המשיב"]
+            petitioners = verdict_json["Doc Details"]["העותר"]
+            defense = verdict_json["Doc Details"]["המשיב"]
+            judges = verdict_json["Doc Details"]["לפני"]
+            petitioner_attorneys = verdict_json["Doc Details"]["בשם העותר"]
+            defense_attorneys = verdict_json["Doc Details"]["בשם המשיב"]
 
-                cleaned_petitioners = self.pre_process_not_legal(petitioners)
-                cleaned_defense = self.pre_process_not_legal(defense)
-                cleaned_judges = self.pre_process_legal(judges)
-                cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
-                cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
+            cleaned_petitioners = self.pre_process_not_legal(petitioners)
+            cleaned_defense = self.pre_process_not_legal(defense)
+            cleaned_judges = self.pre_process_legal(judges)
+            cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
+            cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
 
-                self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners, 'העותר מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_defense, 'המשיב מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_judges, 'לפני מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners_attorneys,
-                                                     'בשם העותר מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
+            verdict_json["Doc Details"]["העותר מנורמל"] = cleaned_petitioners
+            verdict_json["Doc Details"]["המשיב מנורמל"] = cleaned_defense
+            verdict_json["Doc Details"]["לפני מנורמל"] = cleaned_judges
+            verdict_json["Doc Details"]["בשם העותר מנורמל"] = cleaned_petitioners_attorneys
+            verdict_json["Doc Details"]["בשם המשיב מנורמל"] = cleaned_defense_attorneys
 
-                self.counter += 1
-                # add passing to next enricher logic here.
+            self.counter += 1
 
-        except Exception as e:
-            print(e)
+            return verdict_json
 
     def run(self):
         while True:
@@ -777,4 +773,4 @@ class Normalizer(Enricher):
                 # add logging here
 
     def enrich(self, file_path):
-        self.normalize(file_path)
+        return self.normalize(file_path)
