@@ -1,6 +1,6 @@
 import os
 from queue import Queue
-from utils import PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR
+from hcva.parser.enricher.utils import PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR
 
 """
 A class that is in charge of enriching existing data
