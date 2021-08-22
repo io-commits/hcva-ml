@@ -4,11 +4,6 @@ from pathlib import Path
 from platform import system
 from glob import glob
 
-ROOT_DIR = os.path.abspath(os.curdir)
-OUTPUT_DIR = ROOT_DIR + '/cases/'
-PARSED_SUCCESS_DIR = OUTPUT_DIR + 'parsed/success/'
-NORMALIZED_SUCCESS_DIR = OUTPUT_DIR + 'normalized/success/'
-NORMALIZED_FAILED_DIR = OUTPUT_DIR + 'normalized/failed/'
 MODULE_DIR = str(Path(__file__).parent.resolve())
 NAMING_SW_CSV = MODULE_DIR + '/resources/naming_stopwords.csv'
 SW_AFTER_FILTER_CSV = MODULE_DIR + '/resources/stopwordsafterfilter.csv'
@@ -63,10 +58,3 @@ def file_exists(file_name):
 def save_data(data, file_name=None, file_path=None):
     with open(file_path + file_name, 'w') as outfile:
         json.dump(data, outfile, indent=4, ensure_ascii=False)
-
-
-def save_case(enriched, case):
-    if enriched:
-        save_data(enriched, case, NORMALIZED_SUCCESS_DIR)
-    else:
-        save_data(enriched, case, NORMALIZED_FAILED_DIR)

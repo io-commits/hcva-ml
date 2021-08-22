@@ -1,6 +1,5 @@
 import os
 from queue import Queue
-from hcva.parser.enricher.utils import PARSED_SUCCESS_DIR, NORMALIZED_SUCCESS_DIR
 
 """
 A class that is in charge of enriching existing data
@@ -11,9 +10,9 @@ The enricher demands a 'settings.json'
 
 class Enricher:
 
-    def __init__(self):
-        Enricher.input_path = PARSED_SUCCESS_DIR
-        Enricher.output_path = NORMALIZED_SUCCESS_DIR
+    def __init__(self, settings):
+        Enricher.input_path = settings.PARSED_SUCCESS_DIR
+        Enricher.output_path = settings.NORMALIZED_SUCCESS_DIR
         Enricher._jobs_queue = Queue()
         Enricher.previous = None
         Enricher.next = None
