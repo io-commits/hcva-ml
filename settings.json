@@ -1,0 +1,12 @@
+{
+	"Enrichers":
+	{
+		"id":0,
+		"type": "Normalizer",
+		"input_path":"C:/Users/Itai/HebrewCourtVerdictsAnalyzer/ML/Pipeline Python Scripts/test_input",
+		"output_path":"C:/Users/Itai/HebrewCourtVerdictsAnalyzer/ML/Pipeline Python Scripts/test_output"
+		
+	}
+	
+	
+}
