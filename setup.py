@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="hcva-ml",
+    name="hcvaEnricher",
     version="0.0.1",
     author="io-commits & Immanuelbh",
     packages=setuptools.find_packages(),
