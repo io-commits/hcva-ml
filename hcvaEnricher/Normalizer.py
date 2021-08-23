@@ -5,11 +5,11 @@ import queue
 import string
 import re
 import jellyfish
-import hcva.parser.enricher.utils as utils
+import hcvaEnricher.utils as utils
 import pandas as pd
 from pathlib import Path
 from itertools import repeat
-from hcva.parser.enricher.Enricher import Enricher
+from hcvaEnricher.Enricher import Enricher
 
 
 """

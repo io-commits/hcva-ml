@@ -1,5 +1,5 @@
-import hcva.parser.enricher.utils as utils
-from hcva.parser.enricher.Normalizer import Normalizer
+import hcvaEnricher.utils as utils
+from hcvaEnricher.Normalizer import Normalizer
 
 
 def normalizer(settings):
