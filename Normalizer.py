@@ -7,12 +7,12 @@ import string
 import re
 import jellyfish
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from itertools import repeat
 from Enricher import Enricher
 
 """
+
 The normalizer in char of normalizing the attorney and judges names
 It receives as a parameter the files names and the current elk connection
 It uses the determine method in order to determine whether a given name exists on the database or not - 
@@ -30,7 +30,7 @@ class Normalizer(Enricher):
     def __init__(self, settings_file_path:str,execution_path:str = None, elk_client = None):
         super().__init__(settings_file_path)
         print(self.input_path)
-        self.legal_dictionary = dict()
+        self._legal_dictionary = dict()
         self.counter = 0
         initialization_mod_flag = self.check_if_csv_exists(execution_path)
         self.initialize_normalizer(self._input_path, initialization_mod_flag)
@@ -67,11 +67,11 @@ class Normalizer(Enricher):
         # 2 with no existing verdicts at all
 
     @property
-    def _legal_dictionary(self):
+    def legal_dictionary(self):
         return self._legal_dictionary
 
-    @_legal_dictionary.setter
-    def _legal_dictionary(self, value):
+    @legal_dictionary.setter
+    def legal_dictionary(self, value):
         if self._legal_dictionary is None:
             self._legal_dictionary = dict()
         else:
@@ -80,6 +80,7 @@ class Normalizer(Enricher):
     def make_doc_details_values_list(self, input_directory:str, output_directory:str):
 
         """
+
         Pulls all of the naming existing on the verdicts jsons and stores them in sets.
 
         Get the verdicts location as input directory and the output folder which will
@@ -89,6 +90,7 @@ class Normalizer(Enricher):
         :param output_directory - path as a string
 
         :returns all the sets created one by one.
+
         """
 
         # set initialization
@@ -888,6 +890,8 @@ class Normalizer(Enricher):
         names_ready_for_for_first_and_last_name = self.orginize_name(names_after_stopwords)
         after_single_clean_list = self.clean_single_name_multi(names_ready_for_for_first_and_last_name)
 
+        # add full judges name here
+
         return after_single_clean_list
 
     def write_normalized_values_to_json(self, verdict_path:str, input_list:list[str], new_role_key:str):
@@ -915,18 +919,27 @@ class Normalizer(Enricher):
         with open(path,'r',encoding='utf-8') as json_to_read:
             verdict = json.load(json_to_read)
             verdict['_source']['doc']['Doc Details'][new_role_key] = input_list
+
         with open(path,'w',encoding='utf-8') as json_to_write:
             json.dump(verdict,json_to_write,ensure_ascii=False)
 
-    def get_verdict_id(self, verdict_path):
+    def get_verdict_id(self, verdict_path:str):
+
+        """
+
+        extracts and returns the verdict id
+
+        :param verdict_path: full path of the verdict json
+
+        :return: the verdict id as string
+
+        """
 
         with open(verdict_path,'r',encoding='utf-8') as json_file:
             verdict=json.load(json_file)
             verdict_id = verdict['_id']
 
         return verdict_id
-
-
 
     def normalize(self, json_path:str):
 
