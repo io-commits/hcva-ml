@@ -4,7 +4,8 @@ from pathlib import Path
 from platform import system
 from glob import glob
 
-MODULE_DIR = str(Path(__file__).parent.resolve())
+# MODULE_DIR = str(Path(__file__).parent.resolve())
+MODULE_DIR = os.path.join(os.path.pardir)
 NAMING_SW_CSV = MODULE_DIR + '/resources/naming_stopwords.csv'
 SW_AFTER_FILTER_CSV = MODULE_DIR + '/resources/stopwordsafterfilter.csv'
 LEGAL_PERSONAL_CSV = MODULE_DIR + '/resources/legal_personal.csv'
