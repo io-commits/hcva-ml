@@ -13,7 +13,8 @@ from hcvaEnricher.Enricher import Enricher
 
 
 """
-The normalizer in char of normalizing the attorney and judges names
+
+The normalizer is in charge of normalizing the attorney and judges names
 It receives as a parameter the files names and the current elk connection
 It uses the determine method in order to determine whether a given name exists on the database or not - 
     if the name exists - it returns the name after normalization and advance occurrences by one
@@ -48,7 +49,7 @@ class Normalizer(Enricher):
                 reader = csv.reader(csv_file, delimiter=',')
                 before = [row[0] for row in reader]
                 after = [row[1] for row in reader]
-                self.legal_dictionary = dict(zip(before, after))
+                self.legal_dictionary = {before: after}
         elif flag == 'elk':
             pass
         elif flag == 'empty':
@@ -558,26 +559,32 @@ class Normalizer(Enricher):
 
         print(str.format('Successfully splitted {0} names', len(indexes)))
 
-    def check_if_name_exists(self, full_name: str, txt_path: str):
+    def fix_judge_names(self, full_names: list[str], txt_path: str):
         """
         looks for a match with the supreme court judges txt file
-        :param full_name - a string of the full name after the process
+        :param full_names - a list of strings of the full names after the process
         :param txt_path - a string with the txt file path
         :returns True when the name exists, False when the name does not exists
         """
-        if len(full_name.split()) == 2:
+        fixed_list = list()
+        flag = 0
+        for full_name in full_names:
             first_name = full_name.split()[0]
             last_name = full_name.split()[1]
-
             with open(txt_path, 'r') as text_file:
-                judges_list = text_file.readlines()
+                judges_list = text_file.read().splitlines()
                 for cur in judges_list:
                     cur_first_name = cur.split()[0]
                     cur_last_name = cur.split()[1]
                     if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
-                        return True
-
-        return False
+                        fixed_list.append(cur)
+                        flag = 1
+                        break
+            if flag == 0:
+                fixed_list.append(full_name)
+            flag = 0
+        print(fixed_list)
+        return fixed_list
 
     def clean_single_name_single(self, name: str):
         """
@@ -722,16 +729,20 @@ class Normalizer(Enricher):
         with open(path, 'w', encoding='utf-8') as json_to_write:
             json.dump(verdict, json_to_write, ensure_ascii=False)
 
-    def get_verdict_id(self, verdict_path):
+    def get_verdict_id(self, verdict_path:str):
+        """
+        extracts and returns the verdict id
+        :param verdict_path: full path of the verdict json
+        :return: the verdict id as string
+        """
         with open(verdict_path, 'r', encoding='utf-8') as json_file:
             verdict = json.load(json_file)
             verdict_id = verdict['_id']
-
         return verdict_id
 
     def normalize(self, case_path: str):
         """
-        takes the json path and path all the representitives names thru the precedure
+        takes the json path and path all the representatives names through the procedure
         case_path - the verdict path string
         output_path - the string of the desired location to write the new json with the normalized names
         """
@@ -741,33 +752,52 @@ class Normalizer(Enricher):
 
             petitioners = verdict_json["Doc Details"]["העותר"]
             defense = verdict_json["Doc Details"]["המשיב"]
-            judges = verdict_json["Doc Details"]["לפני"]
             petitioner_attorneys = verdict_json["Doc Details"]["בשם העותר"]
             defense_attorneys = verdict_json["Doc Details"]["בשם המשיב"]
+            judges = verdict_json["Doc Details"]["לפני"]
 
             cleaned_petitioners = self.pre_process_not_legal(petitioners)
             cleaned_defense = self.pre_process_not_legal(defense)
-            cleaned_judges = self.pre_process_legal(judges)
             cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
             cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
+            cleaned_judges = self.pre_process_legal(judges)
+            fixed = self.fix_judge_names(cleaned_judges, 'resources/israel_court_judges_fixed.txt')
+            self.add_to_legal_dictionary(judges, fixed)
 
             verdict_json["Doc Details"]["העותר מנורמל"] = cleaned_petitioners
             verdict_json["Doc Details"]["המשיב מנורמל"] = cleaned_defense
-            verdict_json["Doc Details"]["לפני מנורמל"] = cleaned_judges
             verdict_json["Doc Details"]["בשם העותר מנורמל"] = cleaned_petitioners_attorneys
             verdict_json["Doc Details"]["בשם המשיב מנורמל"] = cleaned_defense_attorneys
+            verdict_json["Doc Details"]["לפני מנורמל"] = cleaned_judges
 
             self.counter += 1
+            self.dump_dictionary()
 
             return verdict_json
 
+    def add_to_legal_dictionary(self, befores, afters):
+        """
+        adds the new normalized name to the object dictionary
+        :param befores: the name before normalization
+        :param afters: the name after normalization
+        """
+        for before, after in zip(befores, afters):
+            self.legal_dictionary[before] = after
+
+    def dump_dictionary(self):
+        try:
+            with open('legal_personal.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for k, v in self.legal_dictionary.items():
+                    writer.writerow([k, v])
+        except IOError:
+            print("I/O error")
+
     def run(self):
         while True:
-
             try:
                 cur = self.get_job_from_queue()
                 self.normalize(cur)
-
             except queue.Empty as empty:
                 pass
                 # add logging here

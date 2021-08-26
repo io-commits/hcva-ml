@@ -2,7 +2,7 @@ import os
 from queue import Queue
 
 """
-A class that is in charge of enriching existing data
+An abstract class that is in charge of enriching existing data
 It acts as the base class of all current and future enrichment classes.
 The enricher demands a 'settings.json'
 """
@@ -13,7 +13,7 @@ class Enricher:
     def __init__(self, settings):
         Enricher.input_path = settings.PARSED_SUCCESS_DIR
         Enricher.output_path = settings.NORMALIZED_SUCCESS_DIR
-        Enricher._jobs_queue = Queue()
+        Enricher.jobs_queue = Queue()
         Enricher.previous = None
         Enricher.next = None
 
@@ -21,11 +21,21 @@ class Enricher:
         raise NotImplementedError('This method must be overridden !')
 
     def add_job_to_queue(self, job):
-        Enricher._jobs_queue.put(job)
+        Enricher.jobs_queue.put(job)
+
+    def get_job_from_queue(self):
+        return self.jobs_queue.get()
 
     @property
-    def _jobs_queue(self):
-        return Enricher._jobs_queue
+    def jobs_queue(self):
+        return Enricher.jobs_queue
+
+    @jobs_queue.setter
+    def jobs_queue(self, value):
+        if Enricher._jobs_queue is None:
+            Enricher._jobs_queue = value
+        else:
+            raise PermissionError('You are not allowed to set the Queue')
 
     @property
     def input_path(self):
@@ -55,11 +65,7 @@ class Enricher:
         if not os.path.isdir(setter_output_path):
             raise NotADirectoryError(f'path {setter_output_path} is not a directory')
 
-        Enricher.output_path = setter_output_path
-
-    @_jobs_queue.setter
-    def _jobs_queue(self, value):
-        raise PermissionError('You are not allowed to set the Queue')
+        Enricher._output_path = setter_output_path
 
     @property
     def previous(self):
@@ -78,4 +84,4 @@ class Enricher:
         Enricher.next = value
 
     def __len__(self):
-        return Enricher._jobs_queue.qsize()
+        return Enricher.jobs_queue.qsize()
