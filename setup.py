@@ -6,11 +6,6 @@ setuptools.setup(
     author="io-commits & Immanuelbh",
     include_package_data=True,
     packages=setuptools.find_packages('hcvaEnricher'),
-    package_dir={'': 'hcvaEnricher'},
-    package_data={
-        'resources': ['*.csv'],
-        '': ['*.py']
-    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
