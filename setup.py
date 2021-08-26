@@ -5,7 +5,7 @@ setuptools.setup(
     version="0.0.2",
     author="io-commits & Immanuelbh",
     include_package_data=True,
-    packages=setuptools.find_packages('hcvaEnricher'),
+    packages=['hcvaEnricher'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

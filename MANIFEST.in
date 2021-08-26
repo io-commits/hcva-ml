@@ -1,1 +1,3 @@
-include hcvaEnricher/resources/*.csv
+include hcvaEnricher/resources/naming_stopwords.csv
+include hcvaEnricher/resources/stopwordsafterfilter.csv
+recursive-include hcvaEnricher *
