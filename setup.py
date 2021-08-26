@@ -9,7 +9,7 @@ setuptools.setup(
     package_dir={'': 'hcvaEnricher'},
     package_data={
         'resources': ['*.csv'],
-        '': ['*.*']
+        '': ['*.py']
     },
     classifiers=[
         "Programming Language :: Python :: 3",
