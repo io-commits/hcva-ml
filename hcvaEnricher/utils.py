@@ -5,10 +5,14 @@ from platform import system
 from glob import glob
 
 # MODULE_DIR = str(Path(__file__).parent.resolve())
-MODULE_DIR = os.path.join(os.path.pardir)
-NAMING_SW_CSV = MODULE_DIR + '/resources/naming_stopwords.csv'
-SW_AFTER_FILTER_CSV = MODULE_DIR + '/resources/stopwordsafterfilter.csv'
-LEGAL_PERSONAL_CSV = MODULE_DIR + '/resources/legal_personal.csv'
+# MODULE_DIR = os.path.join(os.path.pardir)
+# RESOURCES_DIR = os.path.join(os.path.dirname(__file__), 'resources')
+NAMING_SW_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'naming_stopwords.csv')
+SW_AFTER_FILTER_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'stopwordsafterfilter.csv')
+LEGAL_PERSONAL_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'legal_personal.csv')
+# NAMING_SW_CSV = RESOURCES_DIR + '/naming_stopwords.csv'
+# SW_AFTER_FILTER_CSV = RESOURCES_DIR + '/stopwordsafterfilter.csv'
+# LEGAL_PERSONAL_CSV = RESOURCES_DIR + '/legal_personal.csv'
 
 
 # do - return current path if didn't got oldPath and remove N folders from the end
