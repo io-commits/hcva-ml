@@ -2,10 +2,15 @@ import setuptools
 
 setuptools.setup(
     name="hcvaEnricher",
-    version="0.0.1",
+    version="0.0.2",
     author="io-commits & Immanuelbh",
-    packages=setuptools.find_packages(),
     include_package_data=True,
+    packages=setuptools.find_packages('hcvaEnricher'),
+    package_dir={'': 'hcvaEnricher'},
+    package_data={
+        'resources': ['*.csv'],
+        '': ['*.*']
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
