@@ -13,7 +13,7 @@ from Enricher import Enricher
 
 """
 
-The normalizer in char of normalizing the attorney and judges names
+The normalizer is in charge of normalizing the attorney and judges names
 It receives as a parameter the files names and the current elk connection
 It uses the determine method in order to determine whether a given name exists on the database or not - 
     if the name exists - it returns the name after normalization and advance occurrences by one
@@ -27,13 +27,12 @@ Important notice : the functioned mentioned above is NOT and Injective function 
 class Normalizer(Enricher):
 
 
-    def __init__(self, settings_file_path:str,execution_path:str = None, elk_client = None):
+    def __init__(self, settings_file_path:str,execution_path:str = None):
         super().__init__(settings_file_path)
-        print(self.input_path)
         self._legal_dictionary = dict()
         self.counter = 0
-        initialization_mod_flag = self.check_if_csv_exists(execution_path)
-        self.initialize_normalizer(self._input_path, initialization_mod_flag)
+        #initialization_mod_flag = self.check_if_csv_exists(execution_path)
+        #self.initialize_normalizer('legal_personal.csv', initialization_mod_flag)
 
     def check_if_csv_exists(self,input_path):
 
@@ -46,14 +45,14 @@ class Normalizer(Enricher):
 
         return flag
 
-    def initialize_normalizer(self,input_path,flag):
+    def initialize_normalizer(self, name_to_normalized_csv_path:str, flag):
 
         if flag == 0:
-            with open(input_path, 'r', encoding='utf-8') as csv_file:
+            with open(name_to_normalized_csv_path, 'r', encoding='utf-8') as csv_file:
                 reader = csv.reader(csv_file, delimiter=',')
                 before = [row[0] for row in reader]
                 after = [row[1] for row in reader]
-                self._legal_dictionary = dict(zip(before,after))
+                self._legal_dictionary = {before:after}
 
         elif flag == 1:
             pass
@@ -73,7 +72,7 @@ class Normalizer(Enricher):
     @legal_dictionary.setter
     def legal_dictionary(self, value):
         if self._legal_dictionary is None:
-            self._legal_dictionary = dict()
+            self._legal_dictionary = value
         else:
             raise PermissionError('You are not allowed to set the dictionary')
 
@@ -707,13 +706,13 @@ class Normalizer(Enricher):
 
         print(str.format('Successfully splitted {0} names', len(indexes)))
 
-    def check_if_name_exists(self, full_name: str, txt_path: str):
+    def fix_judge_names(self, full_names: list[str], txt_path: str):
 
         """
 
         looks for a match with the supreme court judges txt file
 
-        :param full_name - a string of the full name after the process
+        :param full_names - a list of strings of the full names after the process
 
         :param txt_path - a string with the txt file path
 
@@ -721,19 +720,36 @@ class Normalizer(Enricher):
 
         """
 
-        if len(full_name.split()) == 2:
+        fixed_list = list()
+        flag = 0
+
+        for full_name in full_names:
+
             first_name = full_name.split()[0]
             last_name = full_name.split()[1]
 
             with open(txt_path, 'r') as text_file:
-                judges_list = text_file.readlines()
+
+                judges_list = text_file.read().splitlines()
+
                 for cur in judges_list:
+
                     cur_first_name = cur.split()[0]
                     cur_last_name = cur.split()[1]
-                    if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
-                        return True
 
-        return False
+                    if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
+                        fixed_list.append(cur)
+                        flag = 1
+                        break
+
+            if flag == 0:
+                fixed_list.append(full_name)
+
+            flag = 0
+
+        print(fixed_list)
+
+        return fixed_list
 
     def clean_single_name_single(self, name:str):
 
@@ -890,7 +906,6 @@ class Normalizer(Enricher):
         names_ready_for_for_first_and_last_name = self.orginize_name(names_after_stopwords)
         after_single_clean_list = self.clean_single_name_multi(names_ready_for_for_first_and_last_name)
 
-        # add full judges name here
 
         return after_single_clean_list
 
@@ -945,7 +960,7 @@ class Normalizer(Enricher):
 
         """
 
-        takes the json path and path all the representitives names thru the precedure
+        takes the json path and path all the representatives names through the procedure
 
         json_path - the verdict path string
 
@@ -969,7 +984,11 @@ class Normalizer(Enricher):
 
                 cleaned_petitioners = self.pre_process_not_legal(petitioners)
                 cleaned_defense = self.pre_process_not_legal(defense)
+
                 cleaned_judges = self.pre_process_legal(judges)
+                fixed = self.fix_judge_names(cleaned_judges, 'israel_court_judges_fixed.txt')
+                self.add_to_legal_dictionary(judges, fixed)
+
                 cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
                 cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
 
@@ -980,10 +999,37 @@ class Normalizer(Enricher):
                 self.write_normalized_values_to_json(input_joined_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
 
                 self.counter += 1
-                # add passing to next enricher logic here.
+
+                self.dump_dictionary()
 
         except Exception as e:
             print(e)
+
+    def add_to_legal_dictionary(self, befores, afters):
+
+        """
+
+        adds the new normalized name to the object dictionary
+
+        :param before: the name before normalization
+
+        :param after: the name after normalization
+
+        """
+
+        for before, after in zip(befores, afters):
+            self._legal_dictionary[before] = after
+
+    def dump_dictionary(self):
+
+        try:
+            with open('legal_personal.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for k, v in self._legal_dictionary.items():
+                    writer.writerow([k, v])
+
+        except IOError:
+            print("I/O error")
 
     def run(self):
         while True:
