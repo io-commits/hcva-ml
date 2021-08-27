@@ -7,7 +7,7 @@ setuptools.setup(
     include_package_data=True,
     packages=['hcvaEnricher'],
     install_requires=['os', 'queue', 'csv', 'json', 'string', 're', 'jellyfish',
-                      'pandas', 'itertools', 'pathlib', 'sklearn=0.24.1', 'pickle'],
+                      'pandas', 'itertools', 'pathlib', 'sklearn==0.24.1', 'pickle'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
