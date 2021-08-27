@@ -11,14 +11,15 @@ import json
 import csv
 import string
 import pickle
+from hcvaEnricher import utils
 
 
 class Classifier(Enricher):
 
-    def __init__(self, settings_file_path:str):
+    def __init__(self, settings_file_path: str):
         super().__init__(settings_file_path)
-        self._models, self._tfidfs = self.load_classifiers('C:/Users/Itai/HebrewCourtVerdictsAnalyzer/ML/data/models')
-        self._category_to_ngram = self.load_category_to_ngram('resources/category_to_ngram.json')
+        self._models, self._tfidfs = self.load_classifiers(utils.CLASSIFIERS)
+        self._category_to_ngram = self.load_category_to_ngram(utils.NGRM_JSON)
 
     def determine_models_path(self, settings_file_path:str):
         """
@@ -31,13 +32,13 @@ class Classifier(Enricher):
             enrichers = settings['Enrichers']
         # complete after fixing the wanted initialization
 
-    def load_category_to_ngram(self, json_path:str):
+    def load_category_to_ngram(self, json_path: str):
         """
         loads the category to ngram dictionary
         :param json_path: the dictionary location as json file
         :return: a dictionary python object
         """
-        with open(json_path,'r') as file:
+        with open(json_path, 'r') as file:
             json_file = json.load(file)
             scanned_dict = json_file['Categories']
             return scanned_dict
@@ -232,22 +233,10 @@ class Classifier(Enricher):
                                                                   ignore_index=True)
 
         # returning the full dfs and the id-text only variable as well
-        return returned_train_df, returned_test_df, returned_train_df.drop(["Veredict_ID", "Verdict_Text"],
-                                                                           axis=1), returned_test_df.drop(
-            ["Veredict_ID", "Verdict_Text"], axis=1)
-
-    def get_verdict_summary_and_id(self, path: str):
-        """
-        extracts verdict summary and id from a specified verdict
-        :param path - a string that holds the verdict path
-        :returns the verdict summary-string
-        :returns the verdict id-string
-        """
-        with open(path, "r", encoding="utf-8") as json_file:
-            json_dict = json.load(json_file)
-            verdict_summary = json_dict["_source"]["doc"]["Doc Details"]["סיכום"]
-            verdict_id = json_dict["_id"]
-        return verdict_summary, verdict_id
+        return returned_train_df, \
+               returned_test_df, \
+               returned_train_df.drop(["Veredict_ID", "Verdict_Text"],axis=1), \
+               returned_test_df.drop(["Veredict_ID", "Verdict_Text"], axis=1)
 
     def make_temp_df(self, path: str, cur_cat: str):
         """
@@ -458,13 +447,9 @@ class Classifier(Enricher):
         tfidf_dict = dict()
 
         for file in os.scandir(input_path):
-
             if os.path.isfile(file):
-
                 with open(file, 'rb') as pickle_file:
-
                     cur_model = pickle.load(pickle_file)
-
                     if os.path.basename(file).find('.pkl') != -1:
                         current_category = os.path.basename(file).split('.pkl')[0]
                         models_dict[current_category] = cur_model
@@ -496,35 +481,12 @@ class Classifier(Enricher):
         max_prob = max(category_to_score.values())
         return score_to_category[max_prob]
 
-    def Enrich(self, file_path):
+    def enrich(self, file_path):
         input_joined_path = self.input_path + '/' + file_path
-        summary, id = self.get_verdict_summary_and_id(input_joined_path)
-        category = self.classify(summary)
-        self.write_normalized_values_to_json(category, id)
+        with open(input_joined_path, "r", encoding="utf-8") as json_file:
+            verdict_json = json.load(json_file)
+            verdict_summary = verdict_json["Doc Details"]["סיכום"]
+            category = self.classify(verdict_summary)
+            verdict_json["Doc Details"]['Category'] = category
 
-    def write_normalized_values_to_json(self, category:str, verdict_id:str):
-        """
-        adds the normalized key with the new values to the json and write it to destination
-        verdict_path - the string of the verdict path
-        dest_path - the string of the destination directory
-        input_list - the normalized values strings in a list
-        new_role_key - the key string that will be added to the json
-        """
-        if os.path.exists(self.output_path + '/' + verdict_id + '.json'):
-            path = self.output_path + '/' + verdict_id + '.json'
-        else:
-            path = self.input_path + '/' + verdict_id + '.json'
-
-        with open(path, 'r', encoding='utf-8') as json_to_read:
-            verdict = json.load(json_to_read)
-            verdict['_source']['doc']['Case Details']['Category'] = category
-
-        with open(path, 'w', encoding='utf-8') as json_to_write:
-            json.dump(verdict, json_to_write, ensure_ascii=False)
-
-
-if __name__ == '__main__':
-    enricher = Classifier('settings.json')
-    enricher.Enrich('1339-12-1.json')
-
-
+            return verdict_json

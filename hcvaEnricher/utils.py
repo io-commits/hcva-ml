@@ -4,12 +4,15 @@ from pathlib import Path
 from platform import system
 from glob import glob
 
+# normalizer
 NAMING_SW_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'naming_stopwords.csv')
 SW_AFTER_FILTER_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'stopwordsafterfilter.csv')
 LEGAL_PERSONAL_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'legal_personal.csv')
+# classifier
+NGRM_JSON = os.path.join(os.path.dirname(__file__), 'resources', 'category_to_ngram.json')
+CLASSIFIERS = os.path.join(os.path.dirname(__file__), 'resources', 'models')
 
-
-# do - return current path if didn't got oldPath and remove N folders from the end
+# return current path if didn't got oldPath and remove N folders from the end
 def get_path(old_path=None, n=0, end_sep=True):
     curr_path = Path().parent.absolute() if old_path is None else old_path  # get curr path in not provided
     split_path = str(curr_path).split('/')  # split path to folders
