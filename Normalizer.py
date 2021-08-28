@@ -772,8 +772,7 @@ class Normalizer(Enricher):
                     count += 1
 
             if count != 1:
-                left = str()
-                right = str()
+
                 left = name.split('-')[0]
                 right = name.split('-')[1]
                 left = ''.join([char for char in str(left) if char not in string.punctuation])
@@ -870,9 +869,9 @@ class Normalizer(Enricher):
 
         determines if specified full name is in the correct order: (first name) (last_name)
 
-        full_name - string to be evaluated
+        :param full_name - string to be evaluated
 
-        returns the string after order is set
+        :returns the string after order is set
 
         """
 
@@ -906,22 +905,21 @@ class Normalizer(Enricher):
         names_ready_for_for_first_and_last_name = self.orginize_name(names_after_stopwords)
         after_single_clean_list = self.clean_single_name_multi(names_ready_for_for_first_and_last_name)
 
-
         return after_single_clean_list
 
     def write_normalized_values_to_json(self, verdict_path:str, input_list:list[str], new_role_key:str):
 
         """
 
-        adds the normalized key with the new values to the json and write it to destination
+        adds the normalized key with the new values to the json and writes it to destination
 
-        verdict_path - the string of the verdict path
+        :param verdict_path - the string of the verdict path
 
-        dest_path - the string of the destination directory
+        :param dest_path - the string of the destination directory
 
-        input_list - the normalized values strings in a list
+        :param input_list - the normalized values strings in a list
 
-        new_role_key - the key string that will be added to the json
+        :param new_role_key - the key string that will be added to the json
 
         """
 
@@ -960,11 +958,9 @@ class Normalizer(Enricher):
 
         """
 
-        takes the json path and path all the representatives names through the procedure
+        process all names found on the given path through the procedure
 
-        json_path - the verdict path string
-
-        output_path - the string of the desired location to write the new json with the normalized names
+        :param json_path - the verdict path string
 
         """
 
@@ -994,7 +990,7 @@ class Normalizer(Enricher):
 
                 self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners, 'העותר מנורמל')
                 self.write_normalized_values_to_json(input_joined_path, cleaned_defense, 'המשיב מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_judges, 'לפני מנורמל')
+                self.write_normalized_values_to_json(input_joined_path, fixed, 'לפני מנורמל')
                 self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners_attorneys, 'בשם העותר מנורמל')
                 self.write_normalized_values_to_json(input_joined_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
 
@@ -1005,15 +1001,15 @@ class Normalizer(Enricher):
         except Exception as e:
             print(e)
 
-    def add_to_legal_dictionary(self, befores, afters):
+    def add_to_legal_dictionary(self, befores:list[str], afters:list[str]):
 
         """
 
         adds the new normalized name to the object dictionary
 
-        :param before: the name before normalization
+        :param befores: the name before normalization
 
-        :param after: the name after normalization
+        :param afters: the name after normalization
 
         """
 
@@ -1042,9 +1038,11 @@ class Normalizer(Enricher):
                 pass
                 # add logging here
 
-    def Enrich(self,file_path):
+    def Enrich(self, file_path):
         self.normalize(file_path)
 
+
 if __name__ == '__main__':
+
     enricher = Normalizer('settings.json')
     enricher.Enrich('1339-12-1.json')
