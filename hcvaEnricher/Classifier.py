@@ -16,9 +16,9 @@ from hcvaEnricher import utils
 
 class Classifier(Enricher):
 
-    def __init__(self, settings_file_path: str):
-        super().__init__(settings_file_path)
-        self._models, self._tfidfs = self.load_classifiers(utils.CLASSIFIERS)
+    def __init__(self, settings: str):
+        super().__init__(settings)
+        self._models, self._tfidfs = self.load_classifiers(settings.CLASSIFIERS)
         self._category_to_ngram = self.load_category_to_ngram(utils.NGRM_JSON)
 
     def determine_models_path(self, settings_file_path:str):
