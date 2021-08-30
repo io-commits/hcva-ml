@@ -1,5 +1,3 @@
-from Enricher import Enricher
-
 import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -11,7 +9,7 @@ import json
 import csv
 import string
 import pickle
-from hcvaEnricher import utils
+from hcvaEnricher import utils, Enricher
 
 
 class Classifier(Enricher):
