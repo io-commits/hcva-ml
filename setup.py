@@ -6,7 +6,7 @@ setuptools.setup(
     author="io-commits & Immanuelbh",
     include_package_data=True,
     packages=['hcvaEnricher'],
-    install_requires=['jellyfish', 'pandas', 'sklearn', 'pickle'],
+    install_requires=['jellyfish', 'pandas', 'sklearn'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
