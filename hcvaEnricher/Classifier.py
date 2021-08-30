@@ -9,7 +9,9 @@ import json
 import csv
 import string
 import pickle
-from hcvaEnricher import utils, Enricher
+import hcvaEnricher.utils as utils
+from hcvaEnricher.Enricher import Enricher
+
 
 
 class Classifier(Enricher):
