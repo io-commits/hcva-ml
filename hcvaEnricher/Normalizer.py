@@ -176,7 +176,7 @@ class Normalizer(Enricher):
         else:
             return None
 
-    def eliminate_words_corresponds_to_regex_list(self, rgx_list: list[str], replace_with_that_str: str,
+    def eliminate_words_corresponds_to_regex_list(self, rgx_list, replace_with_that_str: str,
                                                   input_text: str):
         """
         :param rgx_list - list of patterns
