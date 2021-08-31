@@ -249,7 +249,7 @@ class Normalizer(Enricher):
         new_df.reset_index(drop=True, inplace=False)
         return new_df
 
-    def is_identical(self, input_word: str, input_collection: list[str], mismatch_count):
+    def is_identical(self, input_word: str, input_collection, mismatch_count):
         """
         check if specified word has mismatch_count amount of chars difference from any of the words in the collection
         :param input_word - string
@@ -316,7 +316,7 @@ class Normalizer(Enricher):
         text = ' '.join([word for word in text.split() if word != ' '])
         return text
 
-    def eliminate_unwanted_chars_multi(self, list_of_names: list[str]):
+    def eliminate_unwanted_chars_multi(self, list_of_names):
         """
         That method is in charge of some of the pre-process precedures:
         1. eliminates pharenthesis
@@ -432,7 +432,7 @@ class Normalizer(Enricher):
 
         return df
 
-    def count_normalized_names(self, df, path: str, roles: list[str]):
+    def count_normalized_names(self, df, path: str, roles):
         """
         counts all occurences of the names exists on the data frame after the preprocess in the whole available verdicts derictory
         assumptions:
@@ -559,7 +559,7 @@ class Normalizer(Enricher):
 
         print(str.format('Successfully splitted {0} names', len(indexes)))
 
-    def fix_judge_names(self, full_names: list[str], txt_path: str):
+    def fix_judge_names(self, full_names, txt_path: str):
         """
         looks for a match with the supreme court judges txt file
         :param full_names - a list of strings of the full names after the process
@@ -614,7 +614,7 @@ class Normalizer(Enricher):
 
         return new_name
 
-    def clean_single_name_multi(self, names: list[str]):
+    def clean_single_name_multi(self, names):
         """
         clean names when multiple '-' character is present.
         that issue may be solved adjusting the parser's work
@@ -628,11 +628,11 @@ class Normalizer(Enricher):
 
         return new_names
 
-    def pre_process_not_legal(self, names: list[str]):
+    def pre_process_not_legal(self, names):
         processed_names = self.eliminate_unwanted_chars_multi(names)
         return processed_names
 
-    def split_by_char(self, names: list[str], char: str):
+    def split_by_char(self, names, char: str):
         splitted = list()
         for name in names:
             flag = False
@@ -652,7 +652,7 @@ class Normalizer(Enricher):
 
         return splitted
 
-    def organize_name(self, names: list[str]):
+    def organize_name(self, names):
         new_values = list()
         for name in names:
             values = ' '.join(name.split()).split()
@@ -696,7 +696,7 @@ class Normalizer(Enricher):
 
         return new_str
 
-    def pre_process_legal(self, names: list[str]):
+    def pre_process_legal(self, names):
         names_after_eliminating_unwanted_chars = self.eliminate_unwanted_chars_multi(names)
         names_after_first_split = self.split_by_char(names_after_eliminating_unwanted_chars, ';')
         names_after_second_split = self.split_by_char(names_after_first_split, ',')
@@ -709,7 +709,7 @@ class Normalizer(Enricher):
 
         return after_single_clean_list
 
-    def write_normalized_values_to_json(self, verdict_path: str, input_list: list[str], new_role_key: str):
+    def write_normalized_values_to_json(self, verdict_path: str, input_list, new_role_key: str):
         """
         adds the normalized key with the new values to the json and write it to destination
         verdict_path - the string of the verdict path
