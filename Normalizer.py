@@ -52,7 +52,8 @@ class Normalizer(Enricher):
                 reader = csv.reader(csv_file, delimiter=',')
                 before = [row[0] for row in reader]
                 after = [row[1] for row in reader]
-                self._legal_dictionary = {before:after}
+                self._legal_dictionary = dict(zip(before,after))
+
 
         elif flag == 1:
             pass
