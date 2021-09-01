@@ -1,3 +1,4 @@
+import traceback
 import hcvaEnricher.utils as utils
 from hcvaEnricher.Classifier import Classifier
 from hcvaEnricher.Normalizer import Normalizer
@@ -16,6 +17,7 @@ def normalize(settings):
             utils.save_data(e, case, settings.NORMALIZED_SUCCESS_DIR)
         except Exception as err:
             print(err)
+            traceback.print_exc()
             utils.save_data(e, case, settings.NORMALIZED_FAILED_DIR)
 
 
