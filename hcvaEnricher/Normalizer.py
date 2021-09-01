@@ -761,7 +761,7 @@ class Normalizer(Enricher):
             cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
             cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
             cleaned_judges = self.pre_process_legal(judges)
-            fixed = self.fix_judge_names(cleaned_judges, 'resources/israel_court_judges_fixed.txt')
+            fixed = self.fix_judge_names(cleaned_judges, utils.COURT_JUDGES)
             self.add_to_legal_dictionary(judges, fixed)
 
             verdict_json["Doc Details"]["העותר מנורמל"] = cleaned_petitioners

@@ -6,8 +6,9 @@ from glob import glob
 
 # normalizer
 NAMING_SW_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'naming_stopwords.csv')
-SW_AFTER_FILTER_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'stopwordsafterfilter.csv')
-LEGAL_PERSONAL_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'legal_personal.csv')
+SW_AFTER_FILTER_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'stopwords_after_filter.csv')
+COMMON_TITLES_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'common_titles.csv')
+COURT_JUDGES = os.path.join(os.path.dirname(__file__), 'resources', 'israel_court_judges_fixed.txt')
 # classifier
 NGRM_JSON = os.path.join(os.path.dirname(__file__), 'resources', 'category_to_ngram.json')
 CLASSIFIERS = os.path.join(os.path.dirname(__file__), 'resources', 'models')

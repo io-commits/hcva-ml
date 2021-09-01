@@ -13,7 +13,6 @@ import hcvaEnricher.utils as utils
 from hcvaEnricher.Enricher import Enricher
 
 
-
 class Classifier(Enricher):
 
     def __init__(self, settings: str):
@@ -21,7 +20,7 @@ class Classifier(Enricher):
         self._models, self._tfidfs = self.load_classifiers(settings.CLASSIFIERS)
         self._category_to_ngram = self.load_category_to_ngram(utils.NGRM_JSON)
 
-    def determine_models_path(self, settings_file_path:str):
+    def determine_models_path(self, settings_file_path: str):
         """
         loads the settings file and extracts the models path
         :param settings_file_path: settings file passed to the constructor

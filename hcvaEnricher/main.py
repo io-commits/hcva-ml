@@ -7,7 +7,7 @@ def normalize(settings):
     print('enricher::normalize')
     utils.create_dir(settings.NORMALIZED_SUCCESS_DIR)
     utils.create_dir(settings.NORMALIZED_FAILED_DIR)
-    normalizer = Normalizer(settings, utils.LEGAL_PERSONAL_CSV)
+    normalizer = Normalizer(settings, utils.COMMON_TITLES_CSV)
     cases = utils.get_cases(settings.PARSED_SUCCESS_DIR)
     for case in cases:
         e = None
