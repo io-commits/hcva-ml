@@ -52,8 +52,12 @@ class Normalizer(Enricher):
                 reader = csv.reader(csv_file, delimiter=',')
                 before = [row[0] for row in reader]
                 after = [row[1] for row in reader]
+<<<<<<< HEAD
                 self._legal_dictionary = dict(zip(before,after))
 
+=======
+                self._legal_dictionary = {before:after}
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         elif flag == 1:
             pass
@@ -773,7 +777,12 @@ class Normalizer(Enricher):
                     count += 1
 
             if count != 1:
+<<<<<<< HEAD
 
+=======
+                left = str()
+                right = str()
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
                 left = name.split('-')[0]
                 right = name.split('-')[1]
                 left = ''.join([char for char in str(left) if char not in string.punctuation])
@@ -870,9 +879,15 @@ class Normalizer(Enricher):
 
         determines if specified full name is in the correct order: (first name) (last_name)
 
+<<<<<<< HEAD
         :param full_name - string to be evaluated
 
         :returns the string after order is set
+=======
+        full_name - string to be evaluated
+
+        returns the string after order is set
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         """
 
@@ -906,12 +921,17 @@ class Normalizer(Enricher):
         names_ready_for_for_first_and_last_name = self.orginize_name(names_after_stopwords)
         after_single_clean_list = self.clean_single_name_multi(names_ready_for_for_first_and_last_name)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
         return after_single_clean_list
 
     def write_normalized_values_to_json(self, verdict_path:str, input_list:list[str], new_role_key:str):
 
         """
 
+<<<<<<< HEAD
         adds the normalized key with the new values to the json and writes it to destination
 
         :param verdict_path - the string of the verdict path
@@ -921,6 +941,17 @@ class Normalizer(Enricher):
         :param input_list - the normalized values strings in a list
 
         :param new_role_key - the key string that will be added to the json
+=======
+        adds the normalized key with the new values to the json and write it to destination
+
+        verdict_path - the string of the verdict path
+
+        dest_path - the string of the destination directory
+
+        input_list - the normalized values strings in a list
+
+        new_role_key - the key string that will be added to the json
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         """
 
@@ -959,9 +990,17 @@ class Normalizer(Enricher):
 
         """
 
+<<<<<<< HEAD
         process all names found on the given path through the procedure
 
         :param json_path - the verdict path string
+=======
+        takes the json path and path all the representatives names through the procedure
+
+        json_path - the verdict path string
+
+        output_path - the string of the desired location to write the new json with the normalized names
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         """
 
@@ -991,7 +1030,11 @@ class Normalizer(Enricher):
 
                 self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners, 'העותר מנורמל')
                 self.write_normalized_values_to_json(input_joined_path, cleaned_defense, 'המשיב מנורמל')
+<<<<<<< HEAD
                 self.write_normalized_values_to_json(input_joined_path, fixed, 'לפני מנורמל')
+=======
+                self.write_normalized_values_to_json(input_joined_path, cleaned_judges, 'לפני מנורמל')
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
                 self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners_attorneys, 'בשם העותר מנורמל')
                 self.write_normalized_values_to_json(input_joined_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
 
@@ -1002,15 +1045,25 @@ class Normalizer(Enricher):
         except Exception as e:
             print(e)
 
+<<<<<<< HEAD
     def add_to_legal_dictionary(self, befores:list[str], afters:list[str]):
+=======
+    def add_to_legal_dictionary(self, befores, afters):
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         """
 
         adds the new normalized name to the object dictionary
 
+<<<<<<< HEAD
         :param befores: the name before normalization
 
         :param afters: the name after normalization
+=======
+        :param before: the name before normalization
+
+        :param after: the name after normalization
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
 
         """
 
@@ -1039,11 +1092,18 @@ class Normalizer(Enricher):
                 pass
                 # add logging here
 
+<<<<<<< HEAD
     def Enrich(self, file_path):
         self.normalize(file_path)
 
 
 if __name__ == '__main__':
 
+=======
+    def Enrich(self,file_path):
+        self.normalize(file_path)
+
+if __name__ == '__main__':
+>>>>>>> 4134b313f314749a285e8924ccbc7bdb099db6da
     enricher = Normalizer('settings.json')
     enricher.Enrich('1339-12-1.json')
