@@ -603,7 +603,7 @@ class Normalizer(Enricher):
         for full_name in full_names:
             first_name = full_name.split()[0]
             last_name = full_name.split()[1]
-            with open(txt_path, 'r') as text_file:
+            with open(txt_path, 'r', encoding='ISO-8859-1') as text_file:
                 judges_list = text_file.read().splitlines()
                 for cur in judges_list:
                     cur_first_name = cur.split()[0]
