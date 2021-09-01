@@ -49,7 +49,7 @@ class Normalizer(Enricher):
                 reader = csv.reader(csv_file, delimiter=',')
                 before = [row[0] for row in reader]
                 after = [row[1] for row in reader]
-                self.legal_dictionary = {before: after}
+                self.legal_dictionary = dict(zip(before, after))
         elif flag == 'elk':
             pass
         elif flag == 'empty':
