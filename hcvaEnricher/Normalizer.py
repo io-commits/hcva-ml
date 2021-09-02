@@ -601,19 +601,21 @@ class Normalizer(Enricher):
         fixed_list = list()
         flag = 0
         for full_name in full_names:
-            first_name = full_name.split()[0]
-            last_name = full_name.split()[1]
-            with open(txt_path, 'r', encoding='UTF-8') as text_file:
-                judges_list = text_file.read().splitlines()
-                for cur in judges_list:
-                    split_name = cur.split(' ')
-                    if len(split_name) > 1:
-                        cur_first_name = split_name[0]
-                        cur_last_name = split_name[1]
-                        if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
-                            fixed_list.append(cur)
-                            flag = 1
-                            break
+            split_full_name = full_name.split(' ')
+            if len(split_full_name) > 1:
+                first_name = split_full_name[0]
+                last_name = split_full_name[1]
+                with open(txt_path, 'r', encoding='UTF-8') as text_file:
+                    judges_list = text_file.read().splitlines()
+                    for cur in judges_list:
+                        split_cur_name = cur.split(' ')
+                        if len(split_cur_name) > 1:
+                            cur_first_name = split_cur_name[0]
+                            cur_last_name = split_cur_name[1]
+                            if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
+                                fixed_list.append(cur)
+                                flag = 1
+                                break
             if flag == 0:
                 fixed_list.append(full_name)
             flag = 0
