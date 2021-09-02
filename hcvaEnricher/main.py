@@ -38,5 +38,5 @@ def classify(settings):
 
 
 def enricher(settings):
-    classify(settings)
     normalize(settings)
+    classify(settings)
