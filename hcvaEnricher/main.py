@@ -27,6 +27,7 @@ def classify(settings):
     utils.create_dir(settings.CLASSIFIED_FAILED_DIR)
     classifier = Classifier(settings)
     cases = utils.get_cases(settings.NORMALIZED_SUCCESS_DIR)
+    cases.extend(utils.get_cases(settings.NORMALIZED_FAILED_DIR))
     for case in cases:
         e = None
         try:
@@ -34,6 +35,7 @@ def classify(settings):
             utils.save_data(e, case, settings.CLASSIFIED_SUCCESS_DIR)
         except Exception as err:
             print(err)
+            traceback.print_exc()
             utils.save_data(e, case, settings.CLASSIFIED_FAILED_DIR)
 
 
