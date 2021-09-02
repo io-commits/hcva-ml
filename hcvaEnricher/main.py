@@ -3,7 +3,6 @@ import hcvaEnricher.utils as utils
 from hcvaEnricher.Classifier import Classifier
 from hcvaEnricher.Normalizer import Normalizer
 
-
 def normalize(settings):
     print('enricher::normalize')
     utils.create_dir(settings.NORMALIZED_SUCCESS_DIR)
@@ -40,5 +39,9 @@ def classify(settings):
 
 
 def enricher(settings):
-    normalize(settings)
-    classify(settings)
+    while True:
+        print('running enricher')
+        normalize(settings)
+        classify(settings)
+        print('enricher finished')
+        utils.delay(10)
