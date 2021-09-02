@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from platform import system
 from glob import glob
-import time
+from time import sleep
 
 # normalizer
 NAMING_SW_CSV = os.path.join(os.path.dirname(__file__), 'resources', 'naming_stopwords.csv')
@@ -67,4 +67,4 @@ def save_data(data, file_name=None, file_path=None):
 def delay(minutes):
     sleep_time = minutes * 60
     print(f'enricher sleeping for {sleep_time} minutes')
-    time.sleep(sleep_time)
+    sleep(sleep_time)
