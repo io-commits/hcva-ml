@@ -65,6 +65,6 @@ def save_data(data, file_name=None, file_path=None):
 
 
 def delay(minutes):
+    print(f'enricher sleeping for {minutes} minutes')
     sleep_time = minutes * 60
-    print(f'enricher sleeping for {sleep_time} minutes')
     sleep(sleep_time)
