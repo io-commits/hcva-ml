@@ -730,15 +730,17 @@ class Normalizer(Enricher):
 
         # split the string
         values = full_name.split()
-        first = values[0]
-        last = values[1]
-        # check if the first name contains '-' - that means it is last name in thw rong position
-        if first.find('-') != -1:
-            new_str = f'{last} {first}'
-        else:
-            new_str = f'{first} {last}'
+        if len(values) > 1:
+            first = values[0]
+            last = values[1]
+            # check if the first name contains '-' - that means it is last name in the wrong position
+            if first.find('-') != -1:
+                new_str = f'{last} {first}'
+            else:
+                new_str = f'{first} {last}'
 
-        return new_str
+            return new_str
+        return full_name
 
     def pre_process_legal(self, names):
         print("normalizer::pre_process_legal")
