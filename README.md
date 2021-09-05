@@ -28,26 +28,40 @@ I have used machine learning methodologies for two main parts:
 
 <br>
 
-1. The verdict category ___classifier___
-<br>    
+# The verdict category ___classifier___
+
+<br> 
+
 There are multiple verdict categories and sub categories.
-<br><br>
-I have used tagged data to sort the verdicts by Categories.
-<br><br>
-The sorted verdicts had been tokenized by a [Tfidf Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html) and used as an input for a [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html) model.   
+
 <br>
+
+I have used tagged data to sort the verdicts by Categories.
+
+<br>
+
+The sorted verdicts had been tokenized by a [Tfidf Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html) and used as an input for a [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html) model. 
+  
+<br>
+
 The classification process explained in the [Classification](#classification) section. 
 
 <br>
 
 <br>
 
-2. The legal personal names ___normalization___
-<br>    
+# The legal personal names ___normalization___
+
+<br>  
+
 There is a variety of representations for each name in the parsed verdicts.
-<br>    
-The normalization process tries to yield an injective function for all parsed input.    
+
+<br>  
+
+The normalization process tries to yield an injective function for all parsed input.   
+
 <br>
+
 The normalization achieved by applying pre-defined deterministic steps elaborated on the [Normalization](#normalization) section below.
 
 <br>   
@@ -59,6 +73,8 @@ The normalization achieved by applying pre-defined deterministic steps elaborate
 
 
 - [Hebrew Court Analyzer - Machine Learning - Introduction](#hebrew-court-analyzer---machine-learning---introduction)
+- [The verdict category ___classifier___](#the-verdict-category-classifier)
+- [The legal personal names ___normalization___](#the-legal-personal-names-normalization)
 - [Table of contents](#table-of-contents)
 - [Data Acquisition](#data-acquisition)
 - [Parsed json scheme](#parsed-json-scheme)
