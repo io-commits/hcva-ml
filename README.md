@@ -30,13 +30,13 @@ I have used machine learning methodologies for two main parts:
 
 1. The verdict category ___classifier___
 <br>    
-    There are multiple verdict categories and sub categories.
+There are multiple verdict categories and sub categories.
 <br><br>
-    I have used tagged data to sort the verdicts by Categories.
+I have used tagged data to sort the verdicts by Categories.
 <br><br>
-    The sorted verdicts had been tokenized by a [Tfidf Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html) and used as an input for a [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html) model.   
+The sorted verdicts had been tokenized by a [Tfidf Vectorizer](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html) and used as an input for a [Multinomial Naive Bayes](https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html) model.   
 <br>
-    The classification process explained in the [Classification](#classification) section. 
+The classification process explained in the [Classification](#classification) section. 
 
 <br>
 
@@ -44,11 +44,11 @@ I have used machine learning methodologies for two main parts:
 
 2. The legal personal names ___normalization___
 <br>    
-    There is a variety of representations for each name in the parsed verdicts.
+There is a variety of representations for each name in the parsed verdicts.
 <br>    
-    The normalization process tries to yield an injective function for all parsed input.    
+The normalization process tries to yield an injective function for all parsed input.    
 <br>
-    The normalization achieved by applying pre-defined deterministic steps elaborated on the [Normalization](#normalization) section below.
+The normalization achieved by applying pre-defined deterministic steps elaborated on the [Normalization](#normalization) section below.
 
 <br>   
 
