@@ -1,3 +1,2 @@
 include hcvaEnricher/resources/
-include hcvaEnricher/models/
 recursive-include hcvaEnricher *
