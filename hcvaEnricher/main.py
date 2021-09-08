@@ -44,4 +44,4 @@ def enricher(settings):
         normalize(settings)
         classify(settings)
         print('enricher finished')
-        utils.delay(minutes=10)
+        utils.delay(days=1)

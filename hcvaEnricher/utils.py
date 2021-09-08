@@ -64,7 +64,7 @@ def save_data(data, file_name=None, file_path=None):
         json.dump(data, outfile, indent=4, ensure_ascii=False)
 
 
-def delay(minutes):
-    print(f'enricher sleeping for {minutes} minutes')
-    sleep_time = minutes * 60
+def delay(days):
+    print(f'enricher sleeping for {days} day(s)')
+    sleep_time = days * 60 * 60 * 24
     sleep(sleep_time)
