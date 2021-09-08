@@ -28,13 +28,11 @@ class Normalizer(Enricher):
 
     def __init__(self, settings, csv_path: str = None):
         super().__init__(settings)
-        print("init normalizer")
         self.legal_dictionary = dict()
         self.counter = 0
         self.initialize_normalizer(csv_path)
 
     def get_flag(self, csv_path: str):
-        print("normalizer::get_flag")
         # implement non existing initialization logic here:
         # 0 - with existing files on local drive
         # 1 - with existing files on elk db
@@ -45,7 +43,6 @@ class Normalizer(Enricher):
             return 'empty'
 
     def initialize_normalizer(self, csv_path: str):
-        print("normalizer::initialize_normalizer")
         flag = self.get_flag(csv_path)
         if flag == 'csv':
             with open(csv_path, 'r', encoding='utf-8') as csv_file:
@@ -69,8 +66,6 @@ class Normalizer(Enricher):
         :param output_directory - path as a string
         :returns all the sets created one by one.
         """
-        print("normalizer::make_doc_details_values_list")
-
         # set initialization
         judge_set = set()
         petitioner_set = set()
@@ -144,7 +139,6 @@ class Normalizer(Enricher):
         :param path - the txt file path
         :returns the newly created df
         """
-        print("normalizer::create_naming_df")
         # check if path exists
         if os.path.exists(path):
             # initialize lists
@@ -189,7 +183,6 @@ class Normalizer(Enricher):
         :param input_text - text to look on for patterns
         :returns the new text after subtracting the matches
         """
-        print("normalizer::eliminate_words_corresponds_to_regex_list")
         new_text = input_text
         for rgx_match in rgx_list:
             new_text = re.sub(rgx_match, replace_with_that_str, new_text)
@@ -204,8 +197,6 @@ class Normalizer(Enricher):
         :param csv_path - the csv that contains the names to be subtracted from each and every matched column
         :returns the element after subtracting matched words
         """
-        print("normalizer::apply_regex_rules_on_naming_csv")
-
         # initalization
         updated_name = input_name
         names_list = list()
@@ -249,8 +240,6 @@ class Normalizer(Enricher):
         :param column - column name
         :returns the df after the percedure
         """
-        print("normalizer::eliminiate_empty_and_duplicates")
-
         new_df = df.copy()
         new_df[new_df[column].astype(bool)]
         print(str.format('After eliminating empty {0}', new_df.shape))
@@ -267,8 +256,6 @@ class Normalizer(Enricher):
         :param mismatch_count - the maximal difference between the input word and the matched one
         :returns True for a match and False for a mismatch
         """
-        print("normalizer::is_identical")
-
         for item in input_collection:
             if jellyfish.levenshtein_distance(input_word, item) <= mismatch_count:
                 return True
@@ -281,8 +268,6 @@ class Normalizer(Enricher):
         :param path - the csv file path
         :returns the string after eliminating all matched words
         """
-        print("normalizer::eliminate_naming_single")
-
         with open(path, "r", encoding="utf-8") as csv_name:
             csv_names = csv.reader(csv_name, delimiter=',')
             names = [row[0] for row in csv_names]
@@ -297,8 +282,6 @@ class Normalizer(Enricher):
         :param path - the csv file path
         :returns the new list after eliminating all matched words from the original strings
         """
-        print("normalizer::eliminate_naming_multi")
-
         new_list = list()
         with open(path, "r", encoding="utf-8") as csv_name:
             csv_names = csv.reader(csv_name, delimiter=',')
@@ -319,8 +302,6 @@ class Normalizer(Enricher):
         :param text - the string we work on
         :returns the text after the process.
         """
-        print("normalizer::eliminate_unwanted_chars_single")
-
         for word in str(text).split(' '):
             if word.find("(") != -1 or word.find(")") != -1:
                 text = text.replace(word, "")
@@ -343,8 +324,6 @@ class Normalizer(Enricher):
         :param list_of_names - a list that contain the string we work on
         :returns new list after the process.
         """
-        print("normalizer::eliminate_unwanted_chars_multi")
-
         new_list = list()
 
         for name in list_of_names:
@@ -363,8 +342,6 @@ class Normalizer(Enricher):
         :returns the original df as the first value and the new one as the second,
         when the original now contains only "good" values and the second only "problematic" ones
         """
-        print("normalizer::split_df_to_proper_name_and_multiname")
-
         # initialization
         df.reset_index(inplace=True, drop=True)
         indexes = list()
@@ -410,8 +387,6 @@ class Normalizer(Enricher):
         :param column - the string describing the column
         :returns the same df after the process
         """
-        print("normalizer::organize_df_names")
-
         # initialization
         new_values = list()
         indexes = list()
@@ -466,8 +441,6 @@ class Normalizer(Enricher):
         :param roles: a list of roles to be examined. Attention! use precisely json scheme name here, for example: העותר
         :returns the df after counters assignment
         """
-        print("normalizer::count_normalized_names")
-
         # initialization
         df["Count_Full_Name"] = 0
         df["Count_First_Name"] = 0
@@ -538,8 +511,6 @@ class Normalizer(Enricher):
         pandas.DataFrame
             Returns a dataframe with the same columns as `df`.
         """
-        print("normalizer::tidy_split")
-
         indexes = list()
         new_values = list()
         df = df.dropna(subset=[column])
@@ -563,8 +534,6 @@ class Normalizer(Enricher):
         :param column - string describing the column name
         :returns the df with new 'First_Name' and 'Last_Name' columns
         """
-        print("normalizer::append_first_and_last_name")
-
         # initalization
         indexes = []
         first_names = []
@@ -596,8 +565,6 @@ class Normalizer(Enricher):
         :param txt_path - a string with the txt file path
         :returns True when the name exists, False when the name does not exists
         """
-        print("normalizer::fix_judge_names")
-
         fixed_list = list()
         flag = 0
         for full_name in full_names:
@@ -629,8 +596,6 @@ class Normalizer(Enricher):
         :param name: a string represents the name to clean
         :return: cleaned string
         """
-        print("normalizer::clean_single_name_single")
-
         new_name = str()
 
         if str(name).find('-') != -1:
@@ -659,8 +624,6 @@ class Normalizer(Enricher):
         :param names: a list of strings that represents the names to clean
         :return: the list with the cleaned names
         """
-        print("normalizer::clean_single_name_multi")
-
         new_names = list()
 
         for name in names:
@@ -669,12 +632,10 @@ class Normalizer(Enricher):
         return new_names
 
     def pre_process_not_legal(self, names):
-        print("normalizer::pre_process_not_legal")
         processed_names = self.eliminate_unwanted_chars_multi(names)
         return processed_names
 
     def split_by_char(self, names, char: str):
-        print("normalizer::split_by_char")
         splitted = list()
         for name in names:
             flag = False
@@ -695,8 +656,6 @@ class Normalizer(Enricher):
         return splitted
 
     def organize_name(self, names):
-        print("normalizer::organize_name")
-
         new_values = list()
         for name in names:
             values = ' '.join(name.split()).split()
@@ -728,8 +687,6 @@ class Normalizer(Enricher):
         full_name - string to be evaluated
         returns the string after order is set
         """
-        print("normalizer::determine_order")
-
         # split the string
         values = full_name.split()
         if len(values) > 1:
@@ -745,8 +702,6 @@ class Normalizer(Enricher):
         return full_name
 
     def pre_process_legal(self, names):
-        print("normalizer::pre_process_legal")
-
         names_after_eliminating_unwanted_chars = self.eliminate_unwanted_chars_multi(names)
         names_after_first_split = self.split_by_char(names_after_eliminating_unwanted_chars, ';')
         names_after_second_split = self.split_by_char(names_after_first_split, ',')
@@ -767,8 +722,6 @@ class Normalizer(Enricher):
         input_list - the normalized values strings in a list
         new_role_key - the key string that will be added to the json
         """
-        print("normalizer::write_normalized_values_to_json")
-
         verdict_id = self.get_verdict_id(verdict_path)
         if os.path.exists(self.output_path + '/' + verdict_id + '.json'):
             path = self.output_path + '/' + verdict_id + '.json'
@@ -787,8 +740,6 @@ class Normalizer(Enricher):
         :param verdict_path: full path of the verdict json
         :return: the verdict id as string
         """
-        print("normalizer::get_verdict_id")
-
         with open(verdict_path, 'r', encoding='utf-8') as json_file:
             verdict = json.load(json_file)
             verdict_id = verdict['_id']
@@ -800,8 +751,6 @@ class Normalizer(Enricher):
         case_path - the verdict path string
         output_path - the string of the desired location to write the new json with the normalized names
         """
-        print("normalizer::normalize")
-
         input_joined_path = self.input_path + case_path
         with open(input_joined_path, 'r', encoding='utf-8') as json_file:
             verdict_json = json.load(json_file)
@@ -837,14 +786,10 @@ class Normalizer(Enricher):
         :param befores: the name before normalization
         :param afters: the name after normalization
         """
-        print("normalizer::add_to_legal_dictionary")
-
         for before, after in zip(befores, afters):
             self.legal_dictionary[before] = after
 
     def dump_dictionary(self):
-        print("normalizer::dump_dictionary")
-
         try:
             with open('legal_personal.csv', 'w', newline='') as csvfile:
                 writer = csv.writer(csvfile)
@@ -854,7 +799,6 @@ class Normalizer(Enricher):
             print("I/O error")
 
     def run(self):
-        print("normalizer::run")
         while True:
             try:
                 cur = self.get_job_from_queue()
@@ -864,5 +808,4 @@ class Normalizer(Enricher):
                 # add logging here
 
     def enrich(self, file_path):
-        print("normalizer::enrich")
         return self.normalize(file_path)
