@@ -43,7 +43,7 @@ class Enricher:
 
     @jobs_queue.setter
     def jobs_queue(self, value):
-        if self.jobs_queue is None:
+        if self._jobs_queue is None:
             self._jobs_queue = value
         else:
             raise PermissionError('You are not allowed to set the Queue')
