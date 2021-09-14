@@ -86,7 +86,6 @@ class Classifier(Enricher):
         else:
             raise PermissionError('You are not allowed to set the tfidfs dictionary after initialization')
 
-
     def check_if_key_exists(self, input_key, input_collection):
 
         """
@@ -638,7 +637,7 @@ class Classifier(Enricher):
 
         return score_to_category[max_prob]
 
-    def Enrich(self, file_path):
+    def enrich(self, file_path):
 
         input_joined_path = self.input_path + '/' + file_path
         summary, id = self.get_verdict_summary_and_id(input_joined_path)

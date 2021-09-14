@@ -28,10 +28,10 @@ class Enricher:
         self._previous = None
         self._next = None
 
-    def Enrich(self,file_path):
+    def enrich(self,file_path:str):
         raise NotImplementedError('This method must be overridden !')
 
-    def add_job_to_queue(self, job):
+    def add_job_to_queue(self, job:str):
         self.jobs_queue.put(job)
 
     def get_job_from_queue(self):
@@ -53,7 +53,7 @@ class Enricher:
         return self._input_path
 
     @input_path.setter
-    def input_path(self, setter_input_path):
+    def input_path(self, setter_input_path:str):
 
         if not os.path.exists(setter_input_path):
             raise FileNotFoundError(f'path {setter_input_path} does not exists')
@@ -68,7 +68,7 @@ class Enricher:
         return self._output_path
 
     @output_path.setter
-    def output_path(self, setter_output_path):
+    def output_path(self, setter_output_path:str):
 
         if os.path.exists(setter_output_path) == False:
             raise FileNotFoundError(f'path {setter_output_path} does not exists')
@@ -83,7 +83,7 @@ class Enricher:
         return self._previous
 
     @previous.setter
-    def previous(self, value):
+    def previous(self, value:Enricher):
         self._previous = value
 
     @property
@@ -91,7 +91,7 @@ class Enricher:
         return self._next
 
     @next.setter
-    def next(self, value):
+    def next(self, value:Enricher):
         self._next = value
 
     def __len__(self):
@@ -102,4 +102,4 @@ if __name__ == '__main__':
     e = Enricher()
     e._input_path = '3'
 
-    print(e.Enrich(1, 2))
+    print(e.Enrich(1))
