@@ -16,7 +16,7 @@ class Classifier(Enricher):
 
     def __init__(self, settings_file_path:str):
         super().__init__(settings_file_path)
-        self._models, self._tfidfs = self.load_classifiers('C:/Users/Itai/HebrewCourtVerdictsAnalyzer/ML/data/models')
+        self._models, self._tfidfs = self.load_classifiers('C:/HebrewCourtVerdictsAnalyzer/ML/data/models')
         self._category_to_ngram = self.load_category_to_ngram('category_to_ngram.json')
 
     def determine_models_path(self, settings_file_path:str):
@@ -457,7 +457,7 @@ class Classifier(Enricher):
         """
 
         for cat in categories:
-            path = dest_path + '/' + cat + '.txt'
+            path = dest_path + cat + '.txt'
             with open(path, 'w', encoding='utf-8') as file:
                 for n_gram_val in n_grams:
                     train, test, y_train, y_test = self.create_train_test_of_specified_verdict_category(cat, input_path)
@@ -522,53 +522,53 @@ class Classifier(Enricher):
 
                 if category == 'Administrative':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 9, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 9, 0.3)
 
                 elif category == 'Civil':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 9, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 9, 0.3)
 
                 elif category == 'Constitutional':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 4, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 4, 0.3)
 
                 elif category == 'Criminal':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 6, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 6, 0.3)
 
                 elif category == 'Family':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 8, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 8, 0.3)
 
                 elif category == 'International law':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 9, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 9, 0.3)
 
                 elif category == 'Labor and Employment':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 7, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 7, 0.3)
 
                 elif category == 'National security, military, and the territories':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 2, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 2, 0.3)
 
                 elif category == 'Religious':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 8, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 8, 0.3)
 
                 elif category == 'Social security, Health Insurance, Pension':
                     self.train_and_dump_model_and_tfidf_vectorizer(category, input_path,
-                                                              destination_path + '/' + category + '.pkl',
-                                                              destination_path + '/' + category + '.tfidf', 7, 0.3)
+                                                              destination_path + category + '.pkl',
+                                                              destination_path + category + '.tfidf', 7, 0.3)
 
                 count += 1
         except Exception as e:
@@ -639,7 +639,7 @@ class Classifier(Enricher):
 
     def enrich(self, file_path):
 
-        input_joined_path = self.input_path + '/' + file_path
+        input_joined_path = self.input_path + file_path
         summary, id = self.get_verdict_summary_and_id(input_joined_path)
         category = self.classify(summary)
         self.write_normalized_values_to_json(category, id)
@@ -660,21 +660,14 @@ class Classifier(Enricher):
 
         """
 
-        if os.path.exists(self.output_path + '/' + verdict_id + '.json'):
-            path = self.output_path + '/' + verdict_id + '.json'
-        else:
-            path = self.input_path + '/' + verdict_id + '.json'
 
-        with open(path, 'r', encoding='utf-8') as json_to_read:
+        input_path = self.input_path + verdict_id + '.json'
+        output_path = self.output_path + verdict_id + '.json'
+        with open(input_path, 'r', encoding='utf-8') as json_to_read:
             verdict = json.load(json_to_read)
             verdict['_source']['doc']['Case Details']['Category'] = category
 
-        with open(path, 'w', encoding='utf-8') as json_to_write:
+        with open(output_path, 'w', encoding='utf-8') as json_to_write:
             json.dump(verdict, json_to_write, ensure_ascii=False)
-
-
-if __name__ == '__main__':
-    enricher = Classifier('settings.json')
-    enricher.Enrich('1339-12-1.json')
 
 

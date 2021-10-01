@@ -1,10 +1,11 @@
-import numbers
 import os
 import csv
 import json
 import queue
 import string
 import re
+import traceback
+
 import jellyfish
 import pandas as pd
 from pathlib import Path
@@ -31,6 +32,7 @@ class Normalizer(Enricher):
         super().__init__(settings_file_path)
         self._legal_dictionary = dict()
         self.counter = 0
+        self.error_counter = 0
         #initialization_mod_flag = self.check_if_csv_exists(execution_path)
         #self.initialize_normalizer('legal_personal.csv', initialization_mod_flag)
 
@@ -214,7 +216,7 @@ class Normalizer(Enricher):
         else:
             return None
 
-    def eliminate_words_corresponds_to_regex_list(self, rgx_list:list[str], replace_with_that_str:str, input_text:str):
+    def eliminate_words_corresponds_to_regex_list(self, rgx_list, replace_with_that_str:str, input_text:str):
 
         """
 
@@ -307,7 +309,6 @@ class Normalizer(Enricher):
 
         new_df = df.copy()
 
-        new_df[new_df[column].astype(bool)]
         print(str.format('After eliminating empty {0}', new_df.shape))
 
         new_df.drop_duplicates(subset=column, keep=False, inplace=True)
@@ -317,7 +318,7 @@ class Normalizer(Enricher):
 
         return new_df
 
-    def is_identical(self, input_word: str, input_collection:list[str], mismatch_count):
+    def is_identical(self, input_word: str, input_collection, mismatch_count):
 
         """
 
@@ -415,7 +416,7 @@ class Normalizer(Enricher):
 
         return text
 
-    def eliiminate_unwanted_chars_multi(self, list_of_names:list[str]):
+    def eliiminate_unwanted_chars_multi(self, list_of_names):
 
         """
 
@@ -561,7 +562,7 @@ class Normalizer(Enricher):
 
         return df
 
-    def count_normalized_names(self, df, path: str, roles: list[str]):
+    def count_normalized_names(self, df, path: str, roles):
 
         """
 
@@ -574,7 +575,7 @@ class Normalizer(Enricher):
 
         :param path - the path that holds all the vericts jsons available
 
-        :param roles - a list of roles to be examined. Attention! use precisely json scheme name here, for example: העותר
+        :param roles - a list of roles to be examined. Attention! use precisely json scheme name here,for example העותר
 
         :returns the df after counters assignment
 
@@ -707,50 +708,83 @@ class Normalizer(Enricher):
 
         print(str.format('Successfully splitted {0} names', len(indexes)))
 
-    def fix_judge_names(self, full_names: list[str], txt_path: str):
-
+    def fix_names(self, full_names, txt_path: str):
         """
-
-        looks for a match with the supreme court judges txt file
-
-        :param full_names - a list of strings of the full names after the process
-
-        :param txt_path - a string with the txt file path
-
-        :returns True when the name exists, False when the name does not exists
-
-        """
-
-        fixed_list = list()
-        flag = 0
-
-        for full_name in full_names:
-
-            first_name = full_name.split()[0]
-            last_name = full_name.split()[1]
-
-            with open(txt_path, 'r') as text_file:
-
-                judges_list = text_file.read().splitlines()
-
-                for cur in judges_list:
-
-                    cur_first_name = cur.split()[0]
-                    cur_last_name = cur.split()[1]
-
-                    if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
-                        fixed_list.append(cur)
-                        flag = 1
-                        break
-
-            if flag == 0:
-                fixed_list.append(full_name)
-
+                looks for a match with the supreme court judges txt file
+                :param full_names - a list of strings of the full names after the process
+                :param txt_path - a string with the txt file path
+                :returns True when the name exists, False when the name does not exists
+                """
+        if len(full_names) > 0:
+            fixed_list = list()
             flag = 0
+            for full_name in full_names:
 
-        print(fixed_list)
+                # apostrophe damges severly the process due to names such as ג'ורג'
 
-        return fixed_list
+                name_without_apostrophe = ''.join([c for c in full_name if c not in ['’', '\'']])
+
+                if name_without_apostrophe != None:
+                    split_full_name = name_without_apostrophe.split()
+                    if len(split_full_name) >= 2:
+                        # input name first and last
+                        first_name = split_full_name[0]
+                        last_name = split_full_name[1]
+                        with open(txt_path, 'r') as text_file:
+                            judges_list = text_file.read().splitlines()
+                            for cur in judges_list:
+                                split_cur_name = cur.split()
+                                if len(split_cur_name) == 2:
+                                    # current iteration first and last names
+                                    cur_first_name = split_cur_name[0]
+                                    cur_last_name = split_cur_name[1]
+
+                                    # look for char to char equality
+                                    if cur_first_name == first_name and cur_last_name == last_name:
+                                        fixed_list.append(cur)
+                                        flag = 1
+                                        break
+
+                                    # look for '-' as last name delimiter
+                                    if cur_last_name.find('-') != -1:
+                                        if len(cur_last_name.split('-')) == 2:
+                                            cur_last_name_first = cur_last_name.split('-')[0]
+                                            cur_last_name_second = cur_last_name.split('-')[1]
+                                            if cur_first_name[0] == first_name[0] and (
+                                                    jellyfish.levenshtein_distance(cur_last_name_first,
+                                                                                   last_name) <= 1 or jellyfish.levenshtein_distance(
+                                                    cur_last_name_second, last_name) <= 1):
+                                                fixed_list.append(cur)
+                                                flag = 1
+                                                break
+
+                                    # look for last name equality and one char first name equality
+                                    if cur_first_name[0] == first_name[0] and cur_last_name == last_name:
+                                        fixed_list.append(cur)
+                                        flag = 1
+                                        break
+
+                                    # look for last name one string apart differentiation and first name first char equality
+                                    if cur_first_name[0] == first_name[0] and jellyfish.levenshtein_distance(cur_last_name,last_name) <= 1:
+                                        fixed_list.append(cur)
+                                        flag = 1
+                                        break
+
+                                # handle 3 spaces delimited names
+                                elif len(split_cur_name) == 3:
+                                    cur_first_name = split_cur_name[0]
+                                    cur_last_name_first = split_cur_name[1]
+                                    cur_last_name_second = split_cur_name[2]
+
+                                    if cur_first_name[0] == first_name[0] and (jellyfish.levenshtein_distance(cur_last_name_first,last_name) <= 1 or jellyfish.levenshtein_distance(cur_last_name_second,last_name) <= 1):
+                                        fixed_list.append(cur)
+                                        flag = 1
+                                        break
+                        if flag == 0:
+                            fixed_list.append(full_name)
+                        flag = 0
+
+            return fixed_list
 
     def clean_single_name_single(self, name:str):
 
@@ -784,7 +818,7 @@ class Normalizer(Enricher):
 
         return new_name
 
-    def clean_single_name_multi(self, names:list[str]):
+    def clean_single_name_multi(self, names):
 
         """
 
@@ -803,13 +837,13 @@ class Normalizer(Enricher):
 
         return new_names
 
-    def pre_process_not_legal(self, names:list[str]):
+    def pre_process_not_legal(self, names):
 
         processed_names = self.eliiminate_unwanted_chars_multi(names)
 
         return processed_names
 
-    def split_by_char(self, names:list[str], char:str):
+    def split_by_char(self, names, char:str):
 
         splitted = list()
 
@@ -834,7 +868,7 @@ class Normalizer(Enricher):
 
         return splitted
 
-    def orginize_name(self, names:list[str]):
+    def orginize_name(self, names):
 
         new_values = list()
         for name in names:
@@ -876,21 +910,24 @@ class Normalizer(Enricher):
 
         """
 
+        if full_name != None:
+            # split the string
+            values = full_name.split()
+            if len(values) == 2:
+                first = values[0]
+                last = values[1]
+                # check if the first name contains '-' - that means it is last name in the wrong position
+                if first.find('-') != -1:
+                    new_str = f'{last} {first}'
+                else:
+                    new_str = f'{first} {last}'
 
-        # split the string
-        values = full_name.split()
-        first = values[0]
-        last = values[1]
+                return new_str
 
-        # check if the first name contains '-' - that means it is last name in thw rong position
-        if first.find('-') != -1:
-            new_str = f'{last} {first}'
-        else:
-            new_str = f'{first} {last}'
+            else:
+                return full_name
 
-        return new_str
-
-    def pre_process_legal(self, names:list[str]):
+    def pre_process_legal(self, names):
 
         names_after_eliminating_unwanted_chars = self.eliiminate_unwanted_chars_multi(names)
 
@@ -908,34 +945,21 @@ class Normalizer(Enricher):
 
         return after_single_clean_list
 
-    def write_normalized_values_to_json(self, verdict_path:str, input_list:list[str], new_role_key:str):
-
+    def write_normalized_values_to_json(self, verdict_json, dest_path, input_list, new_role_key:str):
         """
+               adds the normalized key with the new values to the json and write it to destination
+               verdict_json - the input verdict json
+               dest_path - the string of the destination directory
+               input_list - the normalized values strings in a list
+               new_role_key - the key string that will be added to the json
+               """
 
-        adds the normalized key with the new values to the json and writes it to destination
+        new_verdict_json = verdict_json
 
-        :param verdict_path - the string of the verdict path
-
-        :param dest_path - the string of the destination directory
-
-        :param input_list - the normalized values strings in a list
-
-        :param new_role_key - the key string that will be added to the json
-
-        """
-
-        verdict_id = self.get_verdict_id(verdict_path)
-        if os.path.exists(self.output_path + '/' + verdict_id + '.json'):
-            path = self.output_path + '/' + verdict_id + '.json'
-        else:
-            path = self.input_path + '/' + verdict_id + '.json'
-
-        with open(path,'r',encoding='utf-8') as json_to_read:
-            verdict = json.load(json_to_read)
-            verdict['_source']['doc']['Doc Details'][new_role_key] = input_list
-
-        with open(path,'w',encoding='utf-8') as json_to_write:
-            json.dump(verdict,json_to_write,ensure_ascii=False)
+        new_verdict_json['_source']['doc']['Doc Details'][new_role_key] = input_list
+        output = self.output_path+dest_path
+        with open(output, 'w', encoding='utf-8') as json_to_write:
+            json.dump(new_verdict_json, json_to_write, ensure_ascii=False)
 
     def get_verdict_id(self, verdict_path:str):
 
@@ -950,7 +974,7 @@ class Normalizer(Enricher):
         """
 
         with open(verdict_path,'r',encoding='utf-8') as json_file:
-            verdict=json.load(json_file)
+            verdict = json.load(json_file)
             verdict_id = verdict['_id']
 
         return verdict_id
@@ -967,7 +991,7 @@ class Normalizer(Enricher):
 
         try:
 
-            input_joined_path = self.input_path + '/' + json_path
+            input_joined_path = self.input_path + json_path
 
             with open(input_joined_path, 'r', encoding='utf-8') as json_file:
 
@@ -983,26 +1007,28 @@ class Normalizer(Enricher):
                 cleaned_defense = self.pre_process_not_legal(defense)
 
                 cleaned_judges = self.pre_process_legal(judges)
-                fixed = self.fix_judge_names(cleaned_judges, 'israel_court_judges_fixed.txt')
+                fixed = self.fix_names(cleaned_judges, 'israel_court_judges_fixed.txt')
                 self.add_to_legal_dictionary(judges, fixed)
 
                 cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
                 cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
 
-                self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners, 'העותר מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_defense, 'המשיב מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, fixed, 'לפני מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_petitioners_attorneys, 'בשם העותר מנורמל')
-                self.write_normalized_values_to_json(input_joined_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
+                self.write_normalized_values_to_json(verdict_json, json_path, cleaned_petitioners, 'העותר מנורמל')
+                self.write_normalized_values_to_json(verdict_json, json_path, cleaned_defense, 'המשיב מנורמל')
+                self.write_normalized_values_to_json(verdict_json, json_path, fixed, 'לפני מנורמל')
+                self.write_normalized_values_to_json(verdict_json, json_path, cleaned_petitioners_attorneys, 'בשם העותר מנורמל')
+                self.write_normalized_values_to_json(verdict_json, json_path, cleaned_defense_attorneys, 'בשם המשיב מנורמל')
 
                 self.counter += 1
 
                 self.dump_dictionary()
 
         except Exception as e:
-            print(e)
+            self.error_counter += 1
+            traceback.print_tb(e.__traceback__)
 
-    def add_to_legal_dictionary(self, befores:list[str], afters:list[str]):
+
+    def add_to_legal_dictionary(self, befores, afters):
 
         """
 
@@ -1013,9 +1039,11 @@ class Normalizer(Enricher):
         :param afters: the name after normalization
 
         """
-
-        for before, after in zip(befores, afters):
-            self._legal_dictionary[before] = after
+        if befores != None and afters != None:
+            if len(befores) == len(afters):
+                for before, after in zip(befores, afters):
+                    if before not in self._legal_dictionary.keys():
+                        self._legal_dictionary[before] = after
 
     def dump_dictionary(self):
 
@@ -1033,6 +1061,7 @@ class Normalizer(Enricher):
 
             try:
                 cur = self.get_job_from_queue()
+                cur = self.get_job_from_queue()
                 self.normalize(cur)
 
             except queue.Empty as empty:
@@ -1042,8 +1071,3 @@ class Normalizer(Enricher):
     def enrich(self, file_path):
         self.normalize(file_path)
 
-
-if __name__ == '__main__':
-
-    enricher = Normalizer('settings.json')
-    enricher.Enrich('1339-12-1.json')

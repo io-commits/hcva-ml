@@ -9,7 +9,7 @@ import os
 An abstract class that is in charge of enriching existing data
 It acts as the base class of all current and future enrichment classes.
 
-The enricher demands a 'settings.json'
+The enricher demands a 'settings_normalizer.json'
 
 
 
@@ -18,7 +18,7 @@ The enricher demands a 'settings.json'
 
 class Enricher:
 
-    def __init__(self, settings_file_path='settings.json'):
+    def __init__(self, settings_file_path='settings_normalizer.json'):
 
         with open(settings_file_path, 'r') as json_file:
             dictionary = json.load(json_file)
@@ -83,7 +83,7 @@ class Enricher:
         return self._previous
 
     @previous.setter
-    def previous(self, value:Enricher):
+    def previous(self, value):
         self._previous = value
 
     @property
@@ -91,7 +91,7 @@ class Enricher:
         return self._next
 
     @next.setter
-    def next(self, value:Enricher):
+    def next(self, value):
         self._next = value
 
     def __len__(self):
