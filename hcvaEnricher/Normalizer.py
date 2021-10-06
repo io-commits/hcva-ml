@@ -815,14 +815,14 @@ class Normalizer(Enricher):
                 cleaned_petitioners_attorneys = self.pre_process_legal(petitioner_attorneys)
                 cleaned_defense_attorneys = self.pre_process_legal(defense_attorneys)
                 cleaned_judges = self.pre_process_legal(judges)
-                fixed = self.fix_judge_names(cleaned_judges, utils.COURT_JUDGES)
-                self.add_to_legal_dictionary(judges, fixed)
+                fixed_judges = self.fix_judge_names(cleaned_judges, utils.COURT_JUDGES)
+                self.add_to_legal_dictionary(judges, fixed_judges)
 
                 verdict_json["Doc Details"]["העותר מנורמל"] = cleaned_petitioners
                 verdict_json["Doc Details"]["המשיב מנורמל"] = cleaned_defense
                 verdict_json["Doc Details"]["בשם העותר מנורמל"] = cleaned_petitioners_attorneys
                 verdict_json["Doc Details"]["בשם המשיב מנורמל"] = cleaned_defense_attorneys
-                verdict_json["Doc Details"]["לפני מנורמל"] = cleaned_judges
+                verdict_json["Doc Details"]["לפני מנורמל"] = fixed_judges
 
                 self.counter += 1
                 self.dump_dictionary()
