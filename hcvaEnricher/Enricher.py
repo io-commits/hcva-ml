@@ -10,9 +10,9 @@ The enricher demands a 'settings.json'
 
 class Enricher:
 
-    def __init__(self, settings):
-        Enricher.input_path = settings.PARSED_SUCCESS_DIR
-        Enricher.output_path = settings.NORMALIZED_SUCCESS_DIR
+    def __init__(self, input_path, output_path):
+        Enricher.input_path = input_path
+        Enricher.output_path = output_path
         Enricher.jobs_queue = Queue()
         Enricher.previous = None
         Enricher.next = None

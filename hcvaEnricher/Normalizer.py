@@ -28,7 +28,7 @@ Important notice : the functioned mentioned above is NOT and Injective function 
 class Normalizer(Enricher):
 
     def __init__(self, settings, csv_path: str = None):
-        super().__init__(settings)
+        super().__init__(settings.PARSED_SUCCESS_DIR, settings.NORMALIZED_SUCCESS_DIR)
         self.legal_dictionary = dict()
         self.counter = 0
         self.error_counter = 0

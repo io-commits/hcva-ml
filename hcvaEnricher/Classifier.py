@@ -16,7 +16,7 @@ from hcvaEnricher.Enricher import Enricher
 class Classifier(Enricher):
 
     def __init__(self, settings: str):
-        super().__init__(settings)
+        super().__init__(settings.NORMALIZED_SUCCESS_DIR, settings.CLASSIFIED_SUCCESS_DIR)
         self._models, self._tfidfs = self.load_classifiers(settings.CLASSIFIERS)
         self._category_to_ngram = self.load_category_to_ngram(utils.NGRM_JSON)
 
