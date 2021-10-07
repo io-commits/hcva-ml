@@ -1,0 +1,2 @@
+include hcvaEnricher/resources/
+recursive-include hcvaEnricher *
