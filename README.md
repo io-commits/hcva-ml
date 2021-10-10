@@ -191,6 +191,14 @@ __Verdict Summary__ - ___\["\_source"]\["doc"]\["Doc Details"]\["סיכום"]___
 
 # Classification
 
+<br>
+
+## General Pipeline
+
+<img src = "images/Classification PipeLine.png" width="550" >
+
+<br>
+
 ## 1. Data labeling
 
 We had a portion of tagged data which was sorted by categories and saved to a folder tree.
@@ -364,6 +372,15 @@ ___
 # Normalization
 
 <br>
+
+## General Pipeline
+
+<br>
+
+<img src = "images/Normalization PipeLine.png" width="550" >
+
+<br>
+
 The names we process are divided into two main categories:
 
 1. Legal system related
