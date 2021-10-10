@@ -377,7 +377,7 @@ ___
 
 <br>
 
-<img src = "images/Normalization PipeLine.png" width="550" >
+<img src = "images/Nomalization PipeLine.png" width="550" >
 
 <br>
 
