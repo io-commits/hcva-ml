@@ -478,6 +478,9 @@ class Classifier(Enricher):
             score_to_category[value] = category
 
         max_prob = max(category_to_score.values())
+        if max_prob <= 0.5:
+            return 'Inconclusive'
+            
         return score_to_category[max_prob]
 
     def enrich(self, file_path):
